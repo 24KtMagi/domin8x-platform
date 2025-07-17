@@ -64,6 +64,10 @@ function App() {
         );
       case 'cur10sax':
         return <Cur10saX darkMode={darkMode} currentUser={currentUser} />;
+      case 'builder':
+        return <Cur10saXBuilder />;
+      case 'studio':
+        return <StudioPro />;
       case 'explore':
         return (
           <div className="flex-1 p-6">
