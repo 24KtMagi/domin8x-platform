@@ -2448,14 +2448,54 @@ export const CreationStudio = ({ onClose }) => {
           {generatedContent.type === 'logo' && (
             <div className="space-y-4">
               <div className="flex justify-center">
-                <div className="w-48 h-48 bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center">
+                <div className="w-48 h-48 bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center relative">
                   <img
                     src={generatedContent.url}
                     alt="Generated logo"
                     className="w-32 h-32 object-contain"
+                    style={{
+                      backgroundColor: generatedContent.transparent ? 'transparent' : 'white',
+                      backgroundImage: generatedContent.transparent ? 'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)' : 'none',
+                      backgroundSize: generatedContent.transparent ? '20px 20px' : 'auto',
+                      backgroundPosition: generatedContent.transparent ? '0 0, 0 10px, 10px -10px, -10px 0px' : 'auto'
+                    }}
                   />
+                  {generatedContent.transparent && (
+                    <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                      Transparent
+                    </div>
+                  )}
                 </div>
               </div>
+              
+              {/* Logo Variations */}
+              {generatedContent.variations && (
+                <div>
+                  <h4 className="font-semibold mb-2">Logo Variations:</h4>
+                  <div className="flex justify-center space-x-3">
+                    {generatedContent.variations.map((variation, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setGeneratedContent({...generatedContent, url: variation})}
+                        className="w-20 h-20 bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center hover:border-purple-500 transition-colors"
+                      >
+                        <img
+                          src={variation}
+                          alt={`Logo variation ${index + 1}`}
+                          className="w-16 h-16 object-contain"
+                          style={{
+                            backgroundColor: 'transparent',
+                            backgroundImage: 'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)',
+                            backgroundSize: '10px 10px',
+                            backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px'
+                          }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div>
                   <span className="font-medium">Style:</span> {generatedContent.style}
@@ -2466,6 +2506,12 @@ export const CreationStudio = ({ onClose }) => {
                 <div>
                   <span className="font-medium">Background:</span> {generatedContent.transparent ? 'Transparent' : 'Solid'}
                 </div>
+              </div>
+              
+              <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <p className="text-sm text-green-800 dark:text-green-400">
+                  ✅ Logo automatically saved to your Logo Library!
+                </p>
               </div>
             </div>
           )}
