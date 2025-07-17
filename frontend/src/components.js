@@ -1059,6 +1059,7 @@ export const AICreationModal = ({ isOpen, onClose, onCreatePost }) => {
   const [generatedContent, setGeneratedContent] = useState(null);
   const [showLogoManager, setShowLogoManager] = useState(false);
   const [showLogoOverlay, setShowLogoOverlay] = useState(false);
+  const [showPromptIndex, setShowPromptIndex] = useState(false);
   const [selectedLogo, setSelectedLogo] = useState(null);
   const [appliedLogo, setAppliedLogo] = useState(null);
 
@@ -1100,6 +1101,12 @@ export const AICreationModal = ({ isOpen, onClose, onCreatePost }) => {
   const handleApplyLogo = (logoSettings) => {
     setAppliedLogo(logoSettings);
     toast.success('Logo applied successfully!');
+  };
+
+  const handleSelectPrompt = (prompt) => {
+    setAiPrompt(prompt);
+    setShowPromptIndex(false);
+    toast.success('Prompt selected from community index!');
   };
 
   const handlePost = () => {
@@ -1205,20 +1212,37 @@ export const AICreationModal = ({ isOpen, onClose, onCreatePost }) => {
                     <SparklesIcon className="w-5 h-5 mr-2 text-blue-500" />
                     AI {creationType === 'image' ? 'Art' : 'Music'} Generation
                   </h3>
-                  <input
-                    type="text"
-                    value={aiPrompt}
-                    onChange={(e) => setAiPrompt(e.target.value)}
-                    placeholder={`Describe the ${creationType} you want to create...`}
-                    className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white mb-3"
-                  />
-                  <button
-                    onClick={handleGenerate}
-                    disabled={isGenerating || !aiPrompt.trim()}
-                    className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                  >
-                    {isGenerating ? 'Generating...' : `Generate ${creationType === 'image' ? 'Art' : 'Music'}`}
-                  </button>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={aiPrompt}
+                      onChange={(e) => setAiPrompt(e.target.value)}
+                      placeholder={`Describe the ${creationType} you want to create...`}
+                      className="w-full p-3 pr-12 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white mb-3"
+                    />
+                    <button
+                      onClick={() => setShowPromptIndex(true)}
+                      className="absolute right-3 top-3 text-purple-500 hover:text-purple-600 transition-colors"
+                      title="Browse Community Prompts"
+                    >
+                      <MagnifyingGlassIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="flex space-x-3">
+                    <button
+                      onClick={handleGenerate}
+                      disabled={isGenerating || !aiPrompt.trim()}
+                      className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    >
+                      {isGenerating ? 'Generating...' : `Generate ${creationType === 'image' ? 'Art' : 'Music'}`}
+                    </button>
+                    <button
+                      onClick={() => setShowPromptIndex(true)}
+                      className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
+                    >
+                      Browse Prompts
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -1340,6 +1364,14 @@ export const AICreationModal = ({ isOpen, onClose, onCreatePost }) => {
         onApplyLogo={handleApplyLogo}
         selectedLogo={selectedLogo}
         imageUrl={generatedContent?.url || generatedContent?.waveform}
+      />
+
+      {/* Prompt Index Modal */}
+      <PromptIndex
+        isOpen={showPromptIndex}
+        onClose={() => setShowPromptIndex(false)}
+        onSelectPrompt={handleSelectPrompt}
+        contentType={creationType}
       />
     </>
   );
