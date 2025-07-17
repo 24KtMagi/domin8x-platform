@@ -217,7 +217,7 @@ export const AuthPage = ({ onAuthSuccess }) => {
               <SparklesIcon className="w-8 h-8 text-white" />
             </div>
             <span className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              MirrorX
+              DOMin8X
             </span>
           </div>
           <p className="text-gray-600 dark:text-gray-400">
