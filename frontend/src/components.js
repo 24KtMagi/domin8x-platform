@@ -42,7 +42,435 @@ import {
   PlayIcon as PlayIconSolid
 } from '@heroicons/react/24/solid';
 
-// Challenge and Leaderboard Data
+// Authentication and User Management
+const mockUsers = [
+  {
+    id: 1,
+    username: 'aiartist_pro',
+    email: 'alex@example.com',
+    password: 'password123',
+    name: 'Alex Chen',
+    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b332c7c6?w=40&h=40&fit=crop&crop=face',
+    bio: 'AI Artist & Creative Technologist',
+    joinDate: '2024-01-10',
+    followers: 1234,
+    following: 567,
+    posts: 89,
+    verified: true,
+    badges: ['🏆', '🎨', '⚡']
+  },
+  {
+    id: 2,
+    username: 'music_master',
+    email: 'jordan@example.com',
+    password: 'music456',
+    name: 'Jordan Kim',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
+    bio: 'AI Music Composer & Sound Designer',
+    joinDate: '2024-01-08',
+    followers: 892,
+    following: 234,
+    posts: 67,
+    verified: true,
+    badges: ['🎵', '🌟', '💫']
+  }
+];
+
+// Authentication Component
+export const AuthPage = ({ onAuthSuccess }) => {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    name: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.username.trim()) {
+      newErrors.username = 'Username is required';
+    } else if (formData.username.length < 3) {
+      newErrors.username = 'Username must be at least 3 characters';
+    }
+
+    if (!formData.password.trim()) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    if (isSignUp) {
+      if (!formData.name.trim()) {
+        newErrors.name = 'Name is required';
+      }
+
+      if (!formData.email.trim()) {
+        newErrors.email = 'Email is required';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        newErrors.email = 'Please enter a valid email';
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      if (isSignUp) {
+        // Check if user already exists
+        const existingUser = mockUsers.find(u => u.username === formData.username || u.email === formData.email);
+        if (existingUser) {
+          setErrors({ username: 'Username or email already exists' });
+          setIsLoading(false);
+          return;
+        }
+
+        // Create new user
+        const newUser = {
+          id: Date.now(),
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face',
+          bio: 'New MirrorX creator',
+          joinDate: new Date().toISOString().split('T')[0],
+          followers: 0,
+          following: 0,
+          posts: 0,
+          verified: false,
+          badges: []
+        };
+
+        mockUsers.push(newUser);
+        localStorage.setItem('mirrorx-user', JSON.stringify(newUser));
+        toast.success('Account created successfully!');
+        onAuthSuccess(newUser);
+      } else {
+        // Sign in
+        const user = mockUsers.find(u => 
+          (u.username === formData.username || u.email === formData.username) && 
+          u.password === formData.password
+        );
+
+        if (user) {
+          localStorage.setItem('mirrorx-user', JSON.stringify(user));
+          toast.success('Welcome back!');
+          onAuthSuccess(user);
+        } else {
+          setErrors({ username: 'Invalid username/email or password' });
+        }
+      }
+
+      setIsLoading(false);
+    }, 1000);
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: '' });
+    }
+  };
+
+  const toggleMode = () => {
+    setIsSignUp(!isSignUp);
+    setFormData({
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      name: ''
+    });
+    setErrors({});
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-md w-full"
+      >
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="flex justify-center items-center space-x-2 mb-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <SparklesIcon className="w-8 h-8 text-white" />
+            </div>
+            <span className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+              MirrorX
+            </span>
+          </div>
+          <p className="text-gray-600 dark:text-gray-400">
+            {isSignUp ? 'Create your account' : 'Welcome back'}
+          </p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {isSignUp && (
+            <div>
+              <label className="block text-sm font-medium mb-2">Full Name</label>
+              <div className="relative">
+                <UserIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  placeholder="Enter your full name"
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white ${
+                    errors.name ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                  }`}
+                />
+              </div>
+              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              {isSignUp ? 'Username' : 'Username or Email'}
+            </label>
+            <div className="relative">
+              <AtSymbolIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                value={formData.username}
+                onChange={(e) => handleInputChange('username', e.target.value)}
+                placeholder={isSignUp ? 'Choose a username' : 'Enter username or email'}
+                className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white ${
+                  errors.username ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                }`}
+              />
+            </div>
+            {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
+          </div>
+
+          {isSignUp && (
+            <div>
+              <label className="block text-sm font-medium mb-2">Email</label>
+              <div className="relative">
+                <AtSymbolIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  placeholder="Enter your email"
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white ${
+                    errors.email ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                  }`}
+                />
+              </div>
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Password</label>
+            <div className="relative">
+              <KeyIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+                placeholder="Enter your password"
+                className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white ${
+                  errors.password ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+              </button>
+            </div>
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+          </div>
+
+          {isSignUp && (
+            <div>
+              <label className="block text-sm font-medium mb-2">Confirm Password</label>
+              <div className="relative">
+                <LockClosedIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  placeholder="Confirm your password"
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white ${
+                    errors.confirmPassword ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                  }`}
+                />
+              </div>
+              {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium flex items-center justify-center space-x-2"
+          >
+            {isLoading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <>
+                {isSignUp ? <UserPlusIcon className="w-5 h-5" /> : <ArrowRightOnRectangleIcon className="w-5 h-5" />}
+                <span>{isSignUp ? 'Create Account' : 'Sign In'}</span>
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Toggle Mode */}
+        <div className="mt-6 text-center">
+          <p className="text-gray-600 dark:text-gray-400">
+            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+            <button
+              onClick={toggleMode}
+              className="text-blue-500 hover:text-blue-600 font-medium"
+            >
+              {isSignUp ? 'Sign In' : 'Sign Up'}
+            </button>
+          </p>
+        </div>
+
+        {/* Demo Accounts */}
+        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Demo Accounts:</p>
+          <div className="space-y-1 text-xs">
+            <p><strong>Username:</strong> aiartist_pro <strong>Password:</strong> password123</p>
+            <p><strong>Username:</strong> music_master <strong>Password:</strong> music456</p>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+// User Profile Component
+export const UserProfile = ({ user, onUpdateProfile }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({
+    name: user.name,
+    bio: user.bio,
+    avatar: user.avatar
+  });
+
+  const handleSave = () => {
+    const updatedUser = { ...user, ...editData };
+    onUpdateProfile(updatedUser);
+    setIsEditing(false);
+    toast.success('Profile updated successfully!');
+  };
+
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-md w-full">
+      <div className="text-center mb-6">
+        <div className="relative inline-block">
+          <img
+            src={user.avatar}
+            alt={user.name}
+            className="w-24 h-24 rounded-full mx-auto mb-4"
+          />
+          {user.verified && (
+            <div className="absolute -top-1 -right-1 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+              <SparklesIcon className="w-5 h-5 text-white" />
+            </div>
+          )}
+        </div>
+
+        {isEditing ? (
+          <div className="space-y-3">
+            <input
+              type="text"
+              value={editData.name}
+              onChange={(e) => setEditData({...editData, name: e.target.value})}
+              className="w-full text-center text-xl font-bold border-b border-gray-300 focus:border-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
+            />
+            <textarea
+              value={editData.bio}
+              onChange={(e) => setEditData({...editData, bio: e.target.value})}
+              rows="2"
+              className="w-full text-center text-gray-600 dark:text-gray-400 border border-gray-300 rounded-lg p-2 focus:border-blue-500 focus:outline-none dark:bg-gray-800 resize-none"
+            />
+            <div className="flex justify-center space-x-3">
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setIsEditing(false)}
+                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <h2 className="text-xl font-bold">{user.name}</h2>
+            <p className="text-gray-500">@{user.username}</p>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">{user.bio}</p>
+            <div className="flex justify-center space-x-1 mt-2">
+              {user.badges.map((badge, index) => (
+                <span key={index} className="text-lg">{badge}</span>
+              ))}
+            </div>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+            >
+              Edit Profile
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-3 gap-4 text-center py-4 border-t border-gray-200 dark:border-gray-700">
+        <div>
+          <div className="text-xl font-bold">{user.posts}</div>
+          <div className="text-sm text-gray-500">Posts</div>
+        </div>
+        <div>
+          <div className="text-xl font-bold">{user.followers}</div>
+          <div className="text-sm text-gray-500">Followers</div>
+        </div>
+        <div>
+          <div className="text-xl font-bold">{user.following}</div>
+          <div className="text-sm text-gray-500">Following</div>
+        </div>
+      </div>
+
+      <div className="text-center pt-4 border-t border-gray-200 dark:border-gray-700">
+        <p className="text-sm text-gray-500">Joined {user.joinDate}</p>
+      </div>
+    </div>
+  );
+};
 const challenges = [
   {
     id: 1,
