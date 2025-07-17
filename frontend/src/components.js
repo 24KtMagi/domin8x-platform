@@ -2083,7 +2083,310 @@ const suggestedUsers = [
   }
 ];
 
-// Navigation Component
+// Cur10saX Art Page Component
+export const Cur10saX = ({ darkMode, currentUser }) => {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [sortBy, setSortBy] = useState('trending');
+  const [showCreateArt, setShowCreateArt] = useState(false);
+  
+  const artCategories = ['All', 'Abstract', 'Cyberpunk', 'Nature', 'Portrait', 'Landscape', 'Fantasy', 'Minimalist'];
+  const sortOptions = [
+    { value: 'trending', label: 'Trending' },
+    { value: 'recent', label: 'Most Recent' },
+    { value: 'popular', label: 'Most Popular' },
+    { value: 'featured', label: 'Featured' }
+  ];
+
+  const featuredArtworks = [
+    {
+      id: 1,
+      title: 'Neon Dreams',
+      artist: 'aiartist_pro',
+      image: 'https://images.unsplash.com/photo-1590870845755-4c3c46615dd1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwzfHxBSSUyMGFydHxlbnwwfHx8Ymx1ZXwxNzUyNzg3ODQwfDA&ixlib=rb-4.1.0&q=85',
+      likes: 2847,
+      category: 'Cyberpunk',
+      hashtags: ['#neon', '#cyberpunk', '#futuristic'],
+      prompt: 'cyberpunk cityscape with neon lights and flying cars',
+      featured: true
+    },
+    {
+      id: 2,
+      title: 'Digital Botanical',
+      artist: 'nature_artist',
+      image: 'https://images.unsplash.com/photo-1611500815043-14c764f7d5d7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwyfHxBSSUyMGFydHxlbnwwfHx8Ymx1ZXwxNzUyNzg3ODQwfDA&ixlib=rb-4.1.0&q=85',
+      likes: 1934,
+      category: 'Nature',
+      hashtags: ['#botanical', '#digital', '#nature'],
+      prompt: 'beautiful digital botanical illustration with flowing organic forms',
+      featured: true
+    },
+    {
+      id: 3,
+      title: 'Iridescent Prism',
+      artist: 'prism_creator',
+      image: 'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85',
+      likes: 2156,
+      category: 'Abstract',
+      hashtags: ['#iridescent', '#prismatic', '#abstract'],
+      prompt: 'iridescent prismatic crystal formations with rainbow reflections',
+      featured: true
+    },
+    {
+      id: 4,
+      title: 'Minimalist Serenity',
+      artist: 'minimal_master',
+      image: 'https://images.unsplash.com/photo-1597075095400-fb3f0de70140?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwzfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85',
+      likes: 1567,
+      category: 'Minimalist',
+      hashtags: ['#minimalist', '#zen', '#peaceful'],
+      prompt: 'minimalist zen garden with simple geometric forms and soft colors',
+      featured: false
+    },
+    {
+      id: 5,
+      title: 'Fantasy Realm',
+      artist: 'fantasy_forge',
+      image: 'https://images.pexels.com/photos/8254894/pexels-photo-8254894.jpeg',
+      likes: 1890,
+      category: 'Fantasy',
+      hashtags: ['#fantasy', '#magical', '#ethereal'],
+      prompt: 'magical fantasy realm with floating islands and ethereal lighting',
+      featured: false
+    },
+    {
+      id: 6,
+      title: 'Portrait Study',
+      artist: 'portrait_pro',
+      image: 'https://images.pexels.com/photos/11140383/pexels-photo-11140383.jpeg',
+      likes: 1234,
+      category: 'Portrait',
+      hashtags: ['#portrait', '#digital', '#realistic'],
+      prompt: 'hyper-realistic digital portrait with dramatic lighting',
+      featured: false
+    }
+  ];
+
+  const getFilteredArtworks = () => {
+    let filtered = featuredArtworks;
+    
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(artwork => artwork.category === selectedCategory);
+    }
+    
+    switch (sortBy) {
+      case 'trending':
+        return filtered.sort((a, b) => b.likes - a.likes);
+      case 'recent':
+        return filtered.sort((a, b) => b.id - a.id);
+      case 'popular':
+        return filtered.sort((a, b) => b.likes - a.likes);
+      case 'featured':
+        return filtered.sort((a, b) => b.featured - a.featured);
+      default:
+        return filtered;
+    }
+  };
+
+  const handleLikeArtwork = (artworkId) => {
+    const artwork = featuredArtworks.find(art => art.id === artworkId);
+    if (artwork) {
+      artwork.likes += 1;
+      toast.success('Artwork liked!');
+    }
+  };
+
+  return (
+    <div className="flex-1 max-w-full">
+      {/* Header */}
+      <div className="sticky top-0 bg-white dark:bg-gray-900 bg-opacity-90 backdrop-blur-md z-10 p-6 border-b border-gray-200 dark:border-gray-800">
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+              Cur10saX
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">AI Art Gallery & Creation Studio</p>
+          </div>
+          <button
+            onClick={() => setShowCreateArt(true)}
+            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-200 font-medium flex items-center space-x-2"
+          >
+            <SparklesIcon className="w-5 h-5" />
+            <span>Create Art</span>
+          </button>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-wrap gap-4 items-center">
+          <div className="flex space-x-2">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Category:</label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white text-sm"
+            >
+              {artCategories.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex space-x-2">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by:</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white text-sm"
+            >
+              {sortOptions.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Featured Section */}
+      <div className="p-6">
+        <h2 className="text-2xl font-bold mb-6 flex items-center">
+          <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mr-3">
+            <span className="text-white font-bold">★</span>
+          </div>
+          Featured Artworks
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {getFilteredArtworks().map((artwork) => (
+            <motion.div
+              key={artwork.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
+              <div className="relative">
+                <img
+                  src={artwork.image}
+                  alt={artwork.title}
+                  className="w-full h-64 object-cover"
+                />
+                {artwork.featured && (
+                  <div className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                    Featured
+                  </div>
+                )}
+                <div className="absolute bottom-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-xs">
+                  {artwork.category}
+                </div>
+              </div>
+              
+              <div className="p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-lg">{artwork.title}</h3>
+                  <button
+                    onClick={() => handleLikeArtwork(artwork.id)}
+                    className="flex items-center space-x-1 text-red-500 hover:text-red-600 transition-colors"
+                  >
+                    <HeartIcon className="w-5 h-5" />
+                    <span className="text-sm">{artwork.likes}</span>
+                  </button>
+                </div>
+                
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
+                  by @{artwork.artist}
+                </p>
+                
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {artwork.hashtags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 text-xs rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                  Prompt: "{artwork.prompt}"
+                </p>
+                
+                <div className="flex justify-between items-center">
+                  <button className="text-purple-500 hover:text-purple-600 text-sm font-medium">
+                    View Details
+                  </button>
+                  <button className="text-gray-500 hover:text-gray-600 text-sm">
+                    <ShareIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Statistics */}
+      <div className="p-6 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 mx-6 rounded-2xl mb-6">
+        <h3 className="text-xl font-bold mb-4">Cur10saX Stats</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-purple-600">12.5K</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Artworks Created</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-pink-600">3.2K</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Artists</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-blue-600">45K</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Total Likes</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-green-600">890</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Featured Works</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Create Art Modal */}
+      <AnimatePresence>
+        {showCreateArt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                  Create Art in Cur10saX
+                </h2>
+                <button
+                  onClick={() => setShowCreateArt(false)}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+                >
+                  <XMarkIcon className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="text-center py-12">
+                <SparklesIcon className="w-16 h-16 text-purple-500 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Coming Soon!</h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Advanced art creation tools will be available here soon.
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 export const Navigation = ({ darkMode, setDarkMode, currentUser, onSignOut, onShowLeaderboard }) => {
   const [showProfile, setShowProfile] = useState(false);
 
