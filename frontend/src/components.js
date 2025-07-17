@@ -2189,6 +2189,18 @@ export const CreationStudio = ({ onClose }) => {
     setShowPromptIndex(false);
   };
 
+  const handleSelectLogo = (logo) => {
+    setSelectedLogo(logo);
+    setShowLogoManager(false);
+    setShowLogoPlacement(true);
+  };
+
+  const handleApplyLogo = (logoSettings) => {
+    setAppliedLogo(logoSettings);
+    setShowLogoPlacement(false);
+    toast.success('Logo overlay applied successfully!');
+  };
+
   const handleStyleClick = (style) => {
     const stylePrompt = `${aiPrompt} in ${style} style`;
     setAiPrompt(stylePrompt);
