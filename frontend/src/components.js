@@ -2193,6 +2193,40 @@ export const CreationStudio = ({ onClose }) => {
     setAiPrompt(stylePrompt);
   };
 
+  const handleLogoUpload = (file) => {
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const uploadedLogo = {
+        id: Date.now(),
+        name: file.name.split('.')[0],
+        url: e.target.result,
+        createdAt: new Date().toISOString().split('T')[0],
+        transparent: file.type === 'image/png',
+        uploaded: true
+      };
+      
+      // Save to localStorage
+      const existingLogos = JSON.parse(localStorage.getItem('domin8x-logos') || '[]');
+      localStorage.setItem('domin8x-logos', JSON.stringify([uploadedLogo, ...existingLogos]));
+      
+      // Set as current logo
+      setGeneratedContent({
+        type: 'logo',
+        url: e.target.result,
+        name: uploadedLogo.name,
+        style: 'Uploaded',
+        format: file.type.split('/')[1].toUpperCase(),
+        transparent: file.type === 'image/png',
+        uploaded: true
+      });
+      
+      toast.success('Logo uploaded successfully!');
+    };
+    reader.readAsDataURL(file);
+  };
+
   const getCurrentStyles = () => {
     switch (activeTab) {
       case 'images': return imageStyles;
