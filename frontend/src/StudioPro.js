@@ -430,4 +430,584 @@ const ProjectSelector = ({ onSelectProject, onClose, user }) => {
   );
 };
 
-export default StudioPro;
+// Graphics Editor Component
+const GraphicsEditor = ({ project, user, onBack }) => {
+  const canvasRef = useRef(null);
+  const [selectedTool, setSelectedTool] = useState('select');
+  const [layers, setLayers] = useState([
+    { id: 1, name: 'Background', type: 'background', visible: true, locked: false, opacity: 1 },
+    { id: 2, name: 'Main Content', type: 'image', visible: true, locked: false, opacity: 1 }
+  ]);
+  const [selectedLayer, setSelectedLayer] = useState(2);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showFontPanel, setShowFontPanel] = useState(false);
+  const [showMediaPanel, setShowMediaPanel] = useState(false);
+  const [showAdjustments, setShowAdjustments] = useState(false);
+  const [currentColor, setCurrentColor] = useState('#3B82F6');
+  const [brushSize, setBrushSize] = useState(10);
+  const [zoomLevel, setZoomLevel] = useState(100);
+  const [history, setHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+
+  // Image adjustments
+  const [imageAdjustments, setImageAdjustments] = useState({
+    brightness: 0,
+    contrast: 0,
+    saturation: 0,
+    hue: 0,
+    blur: 0,
+    sharpen: 0
+  });
+
+  // Typography settings
+  const [textSettings, setTextSettings] = useState({
+    fontFamily: 'Inter',
+    fontSize: 24,
+    fontWeight: 400,
+    lineHeight: 1.2,
+    letterSpacing: 0,
+    textAlign: 'left',
+    color: '#000000'
+  });
+
+  const tools = [
+    { id: 'select', icon: '↖', label: 'Select', shortcut: 'V' },
+    { id: 'brush', icon: '🖌', label: 'Brush', shortcut: 'B' },
+    { id: 'text', icon: 'T', label: 'Text', shortcut: 'T' },
+    { id: 'shapes', icon: '⬜', label: 'Shapes', shortcut: 'R' },
+    { id: 'crop', icon: '✂', label: 'Crop', shortcut: 'C' },
+    { id: 'clone', icon: '⚇', label: 'Clone', shortcut: 'S' },
+    { id: 'eraser', icon: '🧽', label: 'Eraser', shortcut: 'E' }
+  ];
+
+  const fonts = [
+    'Inter', 'Roboto', 'Open Sans', 'Poppins', 'Montserrat', 'Lato', 'Playfair Display',
+    'Merriweather', 'Dancing Script', 'Bebas Neue', 'Oswald', 'Raleway'
+  ];
+
+  const colors = [
+    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD',
+    '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9', '#F8C471', '#82E0AA',
+    '#000000', '#FFFFFF', '#808080', '#FF0000', '#00FF00', '#0000FF'
+  ];
+
+  const handleImportFromLink = () => {
+    const link = prompt('Paste your DOMin8X workspace link:');
+    if (link) {
+      // Simulate importing content from DOMin8X
+      toast.success('Content imported from DOMin8X!');
+      // Add new layer with imported content
+      const newLayer = {
+        id: Date.now(),
+        name: 'Imported Content',
+        type: 'image',
+        visible: true,
+        locked: false,
+        opacity: 1,
+        content: link
+      };
+      setLayers([...layers, newLayer]);
+    }
+  };
+
+  const handleColorChange = (color) => {
+    setCurrentColor(color);
+    setShowColorPicker(false);
+  };
+
+  const handleAddText = () => {
+    const newLayer = {
+      id: Date.now(),
+      name: 'Text Layer',
+      type: 'text',
+      visible: true,
+      locked: false,
+      opacity: 1,
+      content: 'Your text here'
+    };
+    setLayers([...layers, newLayer]);
+    setSelectedLayer(newLayer.id);
+    setShowFontPanel(true);
+  };
+
+  const handleAddShape = (shape) => {
+    const newLayer = {
+      id: Date.now(),
+      name: `${shape} Shape`,
+      type: 'shape',
+      visible: true,
+      locked: false,
+      opacity: 1,
+      content: shape
+    };
+    setLayers([...layers, newLayer]);
+    setSelectedLayer(newLayer.id);
+  };
+
+  const handleLayerVisibility = (layerId) => {
+    setLayers(layers.map(layer => 
+      layer.id === layerId ? { ...layer, visible: !layer.visible } : layer
+    ));
+  };
+
+  const handleLayerLock = (layerId) => {
+    setLayers(layers.map(layer => 
+      layer.id === layerId ? { ...layer, locked: !layer.locked } : layer
+    ));
+  };
+
+  const handleLayerOpacity = (layerId, opacity) => {
+    setLayers(layers.map(layer => 
+      layer.id === layerId ? { ...layer, opacity: opacity / 100 } : layer
+    ));
+  };
+
+  const handleDuplicateLayer = (layerId) => {
+    const layer = layers.find(l => l.id === layerId);
+    if (layer) {
+      const newLayer = {
+        ...layer,
+        id: Date.now(),
+        name: `${layer.name} Copy`
+      };
+      setLayers([...layers, newLayer]);
+    }
+  };
+
+  const handleDeleteLayer = (layerId) => {
+    setLayers(layers.filter(layer => layer.id !== layerId));
+    if (selectedLayer === layerId) {
+      setSelectedLayer(layers[0]?.id || null);
+    }
+  };
+
+  const handleExport = (format) => {
+    toast.success(`Exporting as ${format}...`);
+    // Simulate export process
+    setTimeout(() => {
+      toast.success(`${format} export complete!`);
+    }, 2000);
+  };
+
+  const handleUndo = () => {
+    if (historyIndex > 0) {
+      setHistoryIndex(historyIndex - 1);
+      toast.success('Undo');
+    }
+  };
+
+  const handleRedo = () => {
+    if (historyIndex < history.length - 1) {
+      setHistoryIndex(historyIndex + 1);
+      toast.success('Redo');
+    }
+  };
+
+  return (
+    <div className="h-screen bg-gray-900 text-white flex flex-col">
+      {/* Top Bar */}
+      <div className="bg-gray-800 border-b border-gray-700 px-4 py-3 flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={onBack}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          >
+            ← Back
+          </button>
+          <div>
+            <h1 className="font-semibold">{project.name}</h1>
+            <p className="text-sm text-gray-400">DOMin8X Studio Pro</p>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handleUndo}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            disabled={historyIndex <= 0}
+          >
+            ↶ Undo
+          </button>
+          <button
+            onClick={handleRedo}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            disabled={historyIndex >= history.length - 1}
+          >
+            ↷ Redo
+          </button>
+          
+          <div className="flex items-center space-x-2 mx-4">
+            <span className="text-sm">Zoom:</span>
+            <input
+              type="range"
+              min="25"
+              max="500"
+              value={zoomLevel}
+              onChange={(e) => setZoomLevel(e.target.value)}
+              className="w-20"
+            />
+            <span className="text-sm">{zoomLevel}%</span>
+          </div>
+
+          <button
+            onClick={handleImportFromLink}
+            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+          >
+            Import Link
+          </button>
+          
+          <div className="relative">
+            <button
+              onClick={() => setShowMediaPanel(!showMediaPanel)}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+            >
+              Export
+            </button>
+            {showMediaPanel && (
+              <div className="absolute right-0 top-full mt-2 bg-gray-800 border border-gray-700 rounded-lg p-2 w-32 z-50">
+                {['PNG', 'JPG', 'SVG', 'PDF'].map(format => (
+                  <button
+                    key={format}
+                    onClick={() => handleExport(format)}
+                    className="w-full text-left px-3 py-2 hover:bg-gray-700 rounded text-sm"
+                  >
+                    {format}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 flex">
+        {/* Left Sidebar - Tools */}
+        <div className="w-16 bg-gray-800 border-r border-gray-700 flex flex-col items-center py-4 space-y-2">
+          {tools.map(tool => (
+            <button
+              key={tool.id}
+              onClick={() => setSelectedTool(tool.id)}
+              className={`w-12 h-12 rounded-lg flex items-center justify-center text-lg transition-colors ${
+                selectedTool === tool.id 
+                  ? 'bg-purple-600 text-white' 
+                  : 'hover:bg-gray-700 text-gray-400'
+              }`}
+              title={`${tool.label} (${tool.shortcut})`}
+            >
+              {tool.icon}
+            </button>
+          ))}
+        </div>
+
+        {/* Tool Properties Panel */}
+        <div className="w-64 bg-gray-800 border-r border-gray-700 p-4 space-y-6">
+          <h3 className="text-lg font-semibold">Tool Properties</h3>
+          
+          {/* Color Picker */}
+          <div>
+            <label className="block text-sm font-medium mb-2">Color</label>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setShowColorPicker(!showColorPicker)}
+                className="w-8 h-8 rounded border-2 border-gray-600"
+                style={{ backgroundColor: currentColor }}
+              />
+              <input
+                type="color"
+                value={currentColor}
+                onChange={(e) => setCurrentColor(e.target.value)}
+                className="w-8 h-8 rounded border-none bg-transparent"
+              />
+            </div>
+            {showColorPicker && (
+              <div className="mt-2 grid grid-cols-6 gap-1">
+                {colors.map(color => (
+                  <button
+                    key={color}
+                    onClick={() => handleColorChange(color)}
+                    className="w-6 h-6 rounded border border-gray-600"
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Brush Size */}
+          {selectedTool === 'brush' && (
+            <div>
+              <label className="block text-sm font-medium mb-2">Brush Size</label>
+              <input
+                type="range"
+                min="1"
+                max="50"
+                value={brushSize}
+                onChange={(e) => setBrushSize(e.target.value)}
+                className="w-full"
+              />
+              <div className="text-sm text-gray-400 mt-1">{brushSize}px</div>
+            </div>
+          )}
+
+          {/* Typography Controls */}
+          {selectedTool === 'text' && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Font Family</label>
+                <select
+                  value={textSettings.fontFamily}
+                  onChange={(e) => setTextSettings({...textSettings, fontFamily: e.target.value})}
+                  className="w-full p-2 bg-gray-700 border border-gray-600 rounded"
+                >
+                  {fonts.map(font => (
+                    <option key={font} value={font}>{font}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Font Size</label>
+                <input
+                  type="number"
+                  value={textSettings.fontSize}
+                  onChange={(e) => setTextSettings({...textSettings, fontSize: e.target.value})}
+                  className="w-full p-2 bg-gray-700 border border-gray-600 rounded"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Font Weight</label>
+                <select
+                  value={textSettings.fontWeight}
+                  onChange={(e) => setTextSettings({...textSettings, fontWeight: e.target.value})}
+                  className="w-full p-2 bg-gray-700 border border-gray-600 rounded"
+                >
+                  <option value="300">Light</option>
+                  <option value="400">Regular</option>
+                  <option value="500">Medium</option>
+                  <option value="600">Semibold</option>
+                  <option value="700">Bold</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Text Align</label>
+                <div className="flex space-x-1">
+                  {['left', 'center', 'right', 'justify'].map(align => (
+                    <button
+                      key={align}
+                      onClick={() => setTextSettings({...textSettings, textAlign: align})}
+                      className={`flex-1 p-2 rounded text-xs ${
+                        textSettings.textAlign === align 
+                          ? 'bg-purple-600' 
+                          : 'bg-gray-700 hover:bg-gray-600'
+                      }`}
+                    >
+                      {align}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Shape Tools */}
+          {selectedTool === 'shapes' && (
+            <div>
+              <label className="block text-sm font-medium mb-2">Shapes</label>
+              <div className="grid grid-cols-3 gap-2">
+                {['rectangle', 'circle', 'triangle', 'star', 'arrow', 'heart'].map(shape => (
+                  <button
+                    key={shape}
+                    onClick={() => handleAddShape(shape)}
+                    className="p-3 bg-gray-700 hover:bg-gray-600 rounded text-sm"
+                  >
+                    {shape}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Quick Actions */}
+          <div className="space-y-2">
+            <button
+              onClick={handleAddText}
+              className="w-full p-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+            >
+              Add Text
+            </button>
+            <button
+              onClick={() => setShowAdjustments(!showAdjustments)}
+              className="w-full p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+            >
+              Adjustments
+            </button>
+          </div>
+        </div>
+
+        {/* Main Canvas Area */}
+        <div className="flex-1 bg-gray-900 flex items-center justify-center p-8">
+          <div className="relative bg-white rounded-lg shadow-2xl" style={{ transform: `scale(${zoomLevel / 100})` }}>
+            <canvas
+              ref={canvasRef}
+              width={800}
+              height={600}
+              className="border border-gray-300 rounded-lg cursor-crosshair"
+              style={{ backgroundColor: '#ffffff' }}
+            />
+            
+            {/* Canvas Overlay for Tools */}
+            <div className="absolute inset-0 pointer-events-none">
+              {layers.map(layer => (
+                <div
+                  key={layer.id}
+                  className={`absolute inset-0 ${layer.visible ? 'block' : 'hidden'}`}
+                  style={{ opacity: layer.opacity }}
+                >
+                  {layer.type === 'text' && (
+                    <div
+                      className="absolute top-4 left-4 cursor-move"
+                      style={{
+                        fontFamily: textSettings.fontFamily,
+                        fontSize: textSettings.fontSize,
+                        fontWeight: textSettings.fontWeight,
+                        textAlign: textSettings.textAlign,
+                        color: textSettings.color
+                      }}
+                    >
+                      {layer.content}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar - Layers & Adjustments */}
+        <div className="w-80 bg-gray-800 border-l border-gray-700 p-4 space-y-6">
+          {/* Image Adjustments */}
+          {showAdjustments && (
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Image Adjustments</h3>
+              <div className="space-y-4">
+                {Object.entries(imageAdjustments).map(([key, value]) => (
+                  <div key={key}>
+                    <label className="block text-sm font-medium mb-2 capitalize">{key}</label>
+                    <input
+                      type="range"
+                      min="-100"
+                      max="100"
+                      value={value}
+                      onChange={(e) => setImageAdjustments({
+                        ...imageAdjustments,
+                        [key]: parseInt(e.target.value)
+                      })}
+                      className="w-full"
+                    />
+                    <div className="text-xs text-gray-400 mt-1">{value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Layers Panel */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Layers</h3>
+            <div className="space-y-2">
+              {layers.map(layer => (
+                <div
+                  key={layer.id}
+                  className={`p-3 rounded-lg border transition-colors ${
+                    selectedLayer === layer.id 
+                      ? 'border-purple-500 bg-purple-900/20' 
+                      : 'border-gray-600 bg-gray-700/50'
+                  }`}
+                  onClick={() => setSelectedLayer(layer.id)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLayerVisibility(layer.id);
+                        }}
+                        className="text-gray-400 hover:text-white"
+                      >
+                        {layer.visible ? <EyeIcon className="w-4 h-4" /> : <EyeSlashIcon className="w-4 h-4" />}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLayerLock(layer.id);
+                        }}
+                        className="text-gray-400 hover:text-white"
+                      >
+                        {layer.locked ? <LockClosedIcon className="w-4 h-4" /> : <LockOpenIcon className="w-4 h-4" />}
+                      </button>
+                      <span className="text-sm font-medium">{layer.name}</span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDuplicateLayer(layer.id);
+                        }}
+                        className="p-1 text-gray-400 hover:text-white"
+                      >
+                        <DocumentDuplicateIcon className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteLayer(layer.id);
+                        }}
+                        className="p-1 text-gray-400 hover:text-red-400"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-2">
+                    <label className="block text-xs text-gray-400 mb-1">Opacity</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={layer.opacity * 100}
+                      onChange={(e) => handleLayerOpacity(layer.id, e.target.value)}
+                      className="w-full h-1"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <button
+              onClick={handleAddText}
+              className="w-full mt-4 p-3 border-2 border-dashed border-gray-600 rounded-lg hover:border-purple-500 transition-colors"
+            >
+              + Add Layer
+            </button>
+          </div>
+
+          {/* Quick Media Library */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Media Library</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="aspect-square bg-gray-700 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-600 cursor-pointer">
+                  <PhotoIcon className="w-8 h-8" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
