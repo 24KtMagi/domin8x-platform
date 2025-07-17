@@ -474,7 +474,7 @@ export const Tweet = ({ tweet, onLike, onRetweet, onBookmark }) => {
                 </div>
                 <div className="flex space-x-2">
                   <button className="p-2 hover:bg-white dark:hover:bg-gray-800 rounded-full">
-                    <VolumeUpIcon className="w-5 h-5" />
+                    <SpeakerWaveIcon className="w-5 h-5" />
                   </button>
                 </div>
               </div>
