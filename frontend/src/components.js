@@ -1614,7 +1614,7 @@ export const LogoManager = ({ isOpen, onClose, onSelectLogo }) => {
     
     // Save to localStorage
     const existingLogos = JSON.parse(localStorage.getItem('mirrorx-logos') || '[]');
-    localStorage.setItem('mirrorx-logos', JSON.stringify([savedLogo, ...existingLogos]));
+    localStorage.setItem('domin8x-logos', JSON.stringify([savedLogo, ...existingLogos]));
     
     toast.success('Logo saved successfully!');
     setIsCreating(false);
