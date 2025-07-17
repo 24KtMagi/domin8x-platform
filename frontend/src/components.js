@@ -2113,7 +2113,7 @@ export const Navigation = ({ darkMode, setDarkMode, currentUser, onSignOut, onSh
               <SparklesIcon className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              MirrorX
+              DOMin8X
             </span>
           </div>
 
