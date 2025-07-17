@@ -664,6 +664,10 @@ export const AICreationModal = ({ isOpen, onClose, onCreatePost }) => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState(null);
+  const [showLogoManager, setShowLogoManager] = useState(false);
+  const [showLogoOverlay, setShowLogoOverlay] = useState(false);
+  const [selectedLogo, setSelectedLogo] = useState(null);
+  const [appliedLogo, setAppliedLogo] = useState(null);
 
   const handleGenerate = async () => {
     if (!aiPrompt.trim()) return;
@@ -692,12 +696,28 @@ export const AICreationModal = ({ isOpen, onClose, onCreatePost }) => {
     }, 2000);
   };
 
+  const handleSelectLogo = (logo) => {
+    setSelectedLogo(logo);
+    setShowLogoManager(false);
+    if (generatedContent && (generatedContent.type === 'image' || generatedContent.type === 'music')) {
+      setShowLogoOverlay(true);
+    }
+  };
+
+  const handleApplyLogo = (logoSettings) => {
+    setAppliedLogo(logoSettings);
+    toast.success('Logo applied successfully!');
+  };
+
   const handlePost = () => {
     if (!content.trim() && !generatedContent) return;
     
     const newPost = {
       content,
-      generatedContent,
+      generatedContent: generatedContent ? {
+        ...generatedContent,
+        appliedLogo
+      } : null,
       timestamp: new Date().toISOString()
     };
     
@@ -709,143 +729,226 @@ export const AICreationModal = ({ isOpen, onClose, onCreatePost }) => {
     setAiPrompt('');
     setGeneratedContent(null);
     setCreationType('text');
+    setSelectedLogo(null);
+    setAppliedLogo(null);
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-        >
+    <>
+      <AnimatePresence>
+        {isOpen && (
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
           >
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Create with AI</h2>
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
-              >
-                <XMarkIcon className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Content Type Selection */}
-            <div className="flex space-x-4 mb-6">
-              <button
-                onClick={() => setCreationType('text')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
-                  creationType === 'text'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-                }`}
-              >
-                <ChatBubbleOvalLeftIcon className="w-5 h-5" />
-                <span>Text</span>
-              </button>
-              <button
-                onClick={() => setCreationType('image')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
-                  creationType === 'image'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-                }`}
-              >
-                <PhotoIcon className="w-5 h-5" />
-                <span>AI Art</span>
-              </button>
-              <button
-                onClick={() => setCreationType('music')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
-                  creationType === 'music'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-                }`}
-              >
-                <MusicalNoteIcon className="w-5 h-5" />
-                <span>AI Music</span>
-              </button>
-            </div>
-
-            {/* Content Input */}
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="What's happening?"
-              className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-              rows="3"
-            />
-
-            {/* AI Generation Section */}
-            {creationType !== 'text' && (
-              <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg">
-                <h3 className="font-semibold mb-3 flex items-center">
-                  <SparklesIcon className="w-5 h-5 mr-2 text-blue-500" />
-                  AI {creationType === 'image' ? 'Art' : 'Music'} Generation
-                </h3>
-                <input
-                  type="text"
-                  value={aiPrompt}
-                  onChange={(e) => setAiPrompt(e.target.value)}
-                  placeholder={`Describe the ${creationType} you want to create...`}
-                  className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white mb-3"
-                />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Create with AI</h2>
                 <button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || !aiPrompt.trim()}
-                  className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  onClick={onClose}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
                 >
-                  {isGenerating ? 'Generating...' : `Generate ${creationType === 'image' ? 'Art' : 'Music'}`}
+                  <XMarkIcon className="w-6 h-6" />
                 </button>
               </div>
-            )}
 
-            {/* Generated Content Preview */}
-            {generatedContent && (
-              <div className="mt-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                <h4 className="font-semibold mb-3">Generated Content:</h4>
-                {generatedContent.type === 'image' ? (
-                  <img
-                    src={generatedContent.url}
-                    alt="Generated AI Art"
-                    className="w-full h-64 object-cover rounded-lg"
-                  />
-                ) : (
-                  <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                        <MusicalNoteIcon className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{generatedContent.title}</p>
-                        <p className="text-sm text-gray-500">{generatedContent.duration}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
+              {/* Content Type Selection */}
+              <div className="flex space-x-4 mb-6">
+                <button
+                  onClick={() => setCreationType('text')}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
+                    creationType === 'text'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  <ChatBubbleOvalLeftIcon className="w-5 h-5" />
+                  <span>Text</span>
+                </button>
+                <button
+                  onClick={() => setCreationType('image')}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
+                    creationType === 'image'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  <PhotoIcon className="w-5 h-5" />
+                  <span>AI Art</span>
+                </button>
+                <button
+                  onClick={() => setCreationType('music')}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-full ${
+                    creationType === 'music'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  <MusicalNoteIcon className="w-5 h-5" />
+                  <span>AI Music</span>
+                </button>
               </div>
-            )}
 
-            {/* Post Button */}
-            <div className="flex justify-end mt-6">
-              <button
-                onClick={handlePost}
-                disabled={!content.trim() && !generatedContent}
-                className="px-8 py-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-              >
-                Post
-              </button>
-            </div>
+              {/* Content Input */}
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="What's happening?"
+                className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                rows="3"
+              />
+
+              {/* AI Generation Section */}
+              {creationType !== 'text' && (
+                <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg">
+                  <h3 className="font-semibold mb-3 flex items-center">
+                    <SparklesIcon className="w-5 h-5 mr-2 text-blue-500" />
+                    AI {creationType === 'image' ? 'Art' : 'Music'} Generation
+                  </h3>
+                  <input
+                    type="text"
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                    placeholder={`Describe the ${creationType} you want to create...`}
+                    className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white mb-3"
+                  />
+                  <button
+                    onClick={handleGenerate}
+                    disabled={isGenerating || !aiPrompt.trim()}
+                    className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  >
+                    {isGenerating ? 'Generating...' : `Generate ${creationType === 'image' ? 'Art' : 'Music'}`}
+                  </button>
+                </div>
+              )}
+
+              {/* Generated Content Preview */}
+              {generatedContent && (
+                <div className="mt-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="font-semibold">Generated Content:</h4>
+                    <button
+                      onClick={() => setShowLogoManager(true)}
+                      className="flex items-center space-x-2 px-3 py-1 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-colors text-sm"
+                    >
+                      <PaintBrushIcon className="w-4 h-4" />
+                      <span>Add Logo</span>
+                    </button>
+                  </div>
+                  
+                  {generatedContent.type === 'image' ? (
+                    <div className="relative">
+                      <img
+                        src={generatedContent.url}
+                        alt="Generated AI Art"
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                      {appliedLogo && (
+                        <div 
+                          className="absolute"
+                          style={{
+                            bottom: '10px',
+                            left: '10px',
+                            width: `${appliedLogo.size}px`,
+                            height: `${appliedLogo.size}px`,
+                            opacity: appliedLogo.opacity
+                          }}
+                        >
+                          <img
+                            src={appliedLogo.logo.url}
+                            alt={appliedLogo.logo.name}
+                            className="w-full h-full object-contain"
+                            style={{
+                              backgroundColor: appliedLogo.logo.transparent ? 'transparent' : 'white',
+                              borderRadius: '8px'
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="relative bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                          <MusicalNoteIcon className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{generatedContent.title}</p>
+                          <p className="text-sm text-gray-500">{generatedContent.duration}</p>
+                        </div>
+                      </div>
+                      {appliedLogo && (
+                        <div 
+                          className="absolute"
+                          style={{
+                            bottom: '10px',
+                            left: '10px',
+                            width: `${appliedLogo.size}px`,
+                            height: `${appliedLogo.size}px`,
+                            opacity: appliedLogo.opacity
+                          }}
+                        >
+                          <img
+                            src={appliedLogo.logo.url}
+                            alt={appliedLogo.logo.name}
+                            className="w-full h-full object-contain"
+                            style={{
+                              backgroundColor: appliedLogo.logo.transparent ? 'transparent' : 'white',
+                              borderRadius: '8px'
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {appliedLogo && (
+                    <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                      <span className="font-medium">Logo applied:</span> {appliedLogo.logo.name} 
+                      <span className="ml-2">({appliedLogo.size}px, {Math.round(appliedLogo.opacity * 100)}% opacity)</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Post Button */}
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={handlePost}
+                  disabled={!content.trim() && !generatedContent}
+                  className="px-8 py-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  Post
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
+
+      {/* Logo Manager Modal */}
+      <LogoManager
+        isOpen={showLogoManager}
+        onClose={() => setShowLogoManager(false)}
+        onSelectLogo={handleSelectLogo}
+      />
+
+      {/* Logo Overlay Modal */}
+      <LogoOverlay
+        isOpen={showLogoOverlay}
+        onClose={() => setShowLogoOverlay(false)}
+        onApplyLogo={handleApplyLogo}
+        selectedLogo={selectedLogo}
+        imageUrl={generatedContent?.url || generatedContent?.waveform}
+      />
+    </>
   );
 };
 
