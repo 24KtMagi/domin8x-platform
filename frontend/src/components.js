@@ -36,7 +36,400 @@ import {
   PlayIcon as PlayIconSolid
 } from '@heroicons/react/24/solid';
 
-// Mock data for saved logos
+// Community Prompt Index Data
+const communityPrompts = [
+  {
+    id: 1,
+    prompt: "iridescent prismatic crystal formation",
+    hashtags: ["#iridescent", "#prismatic", "#crystal", "#fantasy"],
+    category: "Art",
+    type: "image",
+    author: "AI_Artist_Pro",
+    likes: 342,
+    uses: 156,
+    successRate: 89,
+    createdAt: "2024-01-15",
+    description: "Creates stunning crystal-like formations with rainbow reflections"
+  },
+  {
+    id: 2,
+    prompt: "cyberpunk neon-lit urban landscape at night",
+    hashtags: ["#cyberpunk", "#neon", "#urban", "#night", "#futuristic"],
+    category: "Art",
+    type: "image",
+    author: "CyberCreator",
+    likes: 287,
+    uses: 203,
+    successRate: 92,
+    createdAt: "2024-01-14",
+    description: "Perfect for futuristic city scenes with vibrant neon lighting"
+  },
+  {
+    id: 3,
+    prompt: "ethereal ambient soundscape with celestial harmonies",
+    hashtags: ["#ethereal", "#ambient", "#celestial", "#peaceful"],
+    category: "Music",
+    type: "music",
+    author: "SoundAlchemist",
+    likes: 198,
+    uses: 89,
+    successRate: 94,
+    createdAt: "2024-01-13",
+    description: "Generates beautiful ambient music perfect for relaxation"
+  },
+  {
+    id: 4,
+    prompt: "watercolor botanical illustration with delicate details",
+    hashtags: ["#watercolor", "#botanical", "#delicate", "#illustration"],
+    category: "Art",
+    type: "image",
+    author: "NatureArtist",
+    likes: 445,
+    uses: 278,
+    successRate: 87,
+    createdAt: "2024-01-12",
+    description: "Creates beautiful botanical art in watercolor style"
+  },
+  {
+    id: 5,
+    prompt: "epic orchestral adventure theme with heroic melodies",
+    hashtags: ["#orchestral", "#epic", "#adventure", "#heroic"],
+    category: "Music",
+    type: "music",
+    author: "EpicComposer",
+    likes: 356,
+    uses: 123,
+    successRate: 91,
+    createdAt: "2024-01-11",
+    description: "Perfect for creating cinematic, heroic music pieces"
+  },
+  {
+    id: 6,
+    prompt: "minimalist geometric abstract with bold colors",
+    hashtags: ["#minimalist", "#geometric", "#abstract", "#bold"],
+    category: "Art",
+    type: "image",
+    author: "MinimalMaster",
+    likes: 234,
+    uses: 145,
+    successRate: 85,
+    createdAt: "2024-01-10",
+    description: "Clean, modern geometric designs with striking color palettes"
+  },
+  {
+    id: 7,
+    prompt: "vintage retro synthwave with nostalgic vibes",
+    hashtags: ["#vintage", "#retro", "#synthwave", "#nostalgic"],
+    category: "Music",
+    type: "music",
+    author: "RetroWave80s",
+    likes: 289,
+    uses: 167,
+    successRate: 88,
+    createdAt: "2024-01-09",
+    description: "Creates authentic 80s synthwave with nostalgic atmosphere"
+  }
+];
+
+// Prompt Index Component
+export const PromptIndex = ({ isOpen, onClose, onSelectPrompt, contentType }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [sortBy, setSortBy] = useState('alphabetical');
+  const [filteredPrompts, setFilteredPrompts] = useState(communityPrompts);
+  const [newPrompt, setNewPrompt] = useState('');
+  const [newHashtags, setNewHashtags] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  useEffect(() => {
+    let filtered = communityPrompts.filter(prompt => {
+      const matchesSearch = prompt.prompt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           prompt.hashtags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesCategory = selectedCategory === 'All' || prompt.category === selectedCategory;
+      const matchesType = contentType === 'all' || prompt.type === contentType;
+      return matchesSearch && matchesCategory && matchesType;
+    });
+
+    // Sort prompts
+    switch (sortBy) {
+      case 'alphabetical':
+        filtered.sort((a, b) => a.prompt.localeCompare(b.prompt));
+        break;
+      case 'popularity':
+        filtered.sort((a, b) => b.likes - a.likes);
+        break;
+      case 'usage':
+        filtered.sort((a, b) => b.uses - a.uses);
+        break;
+      case 'success':
+        filtered.sort((a, b) => b.successRate - a.successRate);
+        break;
+      default:
+        break;
+    }
+
+    setFilteredPrompts(filtered);
+  }, [searchTerm, selectedCategory, sortBy, contentType]);
+
+  const handleAddPrompt = () => {
+    if (!newPrompt.trim() || !newHashtags.trim()) return;
+
+    const hashtags = newHashtags.split(',').map(tag => 
+      tag.trim().startsWith('#') ? tag.trim() : `#${tag.trim()}`
+    );
+
+    const prompt = {
+      id: Date.now(),
+      prompt: newPrompt,
+      hashtags,
+      category: contentType === 'image' ? 'Art' : 'Music',
+      type: contentType,
+      author: 'You',
+      likes: 0,
+      uses: 0,
+      successRate: 0,
+      createdAt: new Date().toISOString().split('T')[0],
+      description: newDescription || 'User-contributed prompt'
+    };
+
+    // Add to community prompts (in real app, this would go to backend)
+    communityPrompts.unshift(prompt);
+    
+    // Save to localStorage
+    const savedPrompts = JSON.parse(localStorage.getItem('mirrorx-prompts') || '[]');
+    localStorage.setItem('mirrorx-prompts', JSON.stringify([prompt, ...savedPrompts]));
+
+    toast.success('Prompt added to community index!');
+    setNewPrompt('');
+    setNewHashtags('');
+    setNewDescription('');
+    setShowAddForm(false);
+  };
+
+  const handleUsePrompt = (prompt) => {
+    // Increment usage count
+    prompt.uses += 1;
+    onSelectPrompt(prompt.prompt);
+    onClose();
+    toast.success(`Using prompt: "${prompt.prompt.substring(0, 30)}..."`);
+  };
+
+  const handleLikePrompt = (promptId) => {
+    const prompt = communityPrompts.find(p => p.id === promptId);
+    if (prompt) {
+      prompt.likes += 1;
+      toast.success('Prompt liked!');
+    }
+  };
+
+  const categories = ['All', 'Art', 'Music'];
+  const sortOptions = [
+    { value: 'alphabetical', label: 'Alphabetical' },
+    { value: 'popularity', label: 'Most Liked' },
+    { value: 'usage', label: 'Most Used' },
+    { value: 'success', label: 'Success Rate' }
+  ];
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-6xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-2xl font-bold">Community Prompt Index</h2>
+                <p className="text-gray-600 dark:text-gray-400">Discover successful AI prompts shared by the community</p>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Search and Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search prompts or hashtags..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                />
+              </div>
+              
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+              >
+                {categories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+              >
+                {sortOptions.map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+
+              <button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200"
+              >
+                <PlusIcon className="w-5 h-5 inline mr-2" />
+                Add Prompt
+              </button>
+            </div>
+
+            {/* Add Prompt Form */}
+            {showAddForm && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg"
+              >
+                <h3 className="font-semibold mb-3">Add New Prompt to Community Index</h3>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    placeholder="Enter your successful prompt..."
+                    value={newPrompt}
+                    onChange={(e) => setNewPrompt(e.target.value)}
+                    className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Hashtags (comma-separated): iridescent, prismatic, crystal"
+                    value={newHashtags}
+                    onChange={(e) => setNewHashtags(e.target.value)}
+                    className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                  />
+                  <textarea
+                    placeholder="Description (optional): Why this prompt works well..."
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                    rows="2"
+                    className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white resize-none"
+                  />
+                  <div className="flex space-x-3">
+                    <button
+                      onClick={handleAddPrompt}
+                      disabled={!newPrompt.trim() || !newHashtags.trim()}
+                      className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Add to Index
+                    </button>
+                    <button
+                      onClick={() => setShowAddForm(false)}
+                      className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Prompts Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredPrompts.map((prompt) => (
+                <motion.div
+                  key={prompt.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 hover:shadow-lg transition-shadow"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center space-x-2">
+                      <div className={`w-3 h-3 rounded-full ${prompt.type === 'image' ? 'bg-blue-500' : 'bg-purple-500'}`}></div>
+                      <span className="text-xs text-gray-500 font-medium">{prompt.category}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs text-green-600 font-medium">{prompt.successRate}%</span>
+                      <button
+                        onClick={() => handleLikePrompt(prompt.id)}
+                        className="text-red-500 hover:text-red-600 transition-colors"
+                      >
+                        <HeartIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <p className="font-medium text-sm mb-2 leading-relaxed">{prompt.prompt}</p>
+                  
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {prompt.hashtags.slice(0, 3).map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {prompt.hashtags.length > 3 && (
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full">
+                        +{prompt.hashtags.length - 3}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">{prompt.description}</p>
+                  
+                  <div className="flex justify-between items-center text-xs text-gray-500 mb-3">
+                    <span>by @{prompt.author}</span>
+                    <span>{prompt.createdAt}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <div className="flex space-x-4 text-xs text-gray-500">
+                      <span>{prompt.likes} likes</span>
+                      <span>{prompt.uses} uses</span>
+                    </div>
+                    <button
+                      onClick={() => handleUsePrompt(prompt)}
+                      className="px-3 py-1 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors text-xs"
+                    >
+                      Use This
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {filteredPrompts.length === 0 && (
+              <div className="text-center py-12">
+                <SparklesIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500">No prompts found matching your criteria</p>
+                <p className="text-sm text-gray-400">Try adjusting your search or filters</p>
+              </div>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 const savedLogos = [
   {
     id: 1,
