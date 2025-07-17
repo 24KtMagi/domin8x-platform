@@ -8,7 +8,7 @@ import {
   EyeIcon,
   DevicePhoneMobileIcon,
   ComputerDesktopIcon,
-  TabletIcon,
+  DeviceTabletIcon,
   PaintBrushIcon,
   SwatchIcon,
   PhotoIcon,
