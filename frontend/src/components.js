@@ -2359,11 +2359,11 @@ export const Cur10saX = ({ darkMode, currentUser }) => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-6xl w-full max-h-[90vh] overflow-y-auto"
             >
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                  Create Art in Cur10saX
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                  Cur10saX Creation Studio
                 </h2>
                 <button
                   onClick={() => setShowCreateArt(false)}
@@ -2373,13 +2373,7 @@ export const Cur10saX = ({ darkMode, currentUser }) => {
                 </button>
               </div>
               
-              <div className="text-center py-12">
-                <SparklesIcon className="w-16 h-16 text-purple-500 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Coming Soon!</h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Advanced art creation tools will be available here soon.
-                </p>
-              </div>
+              <CreationStudio onClose={() => setShowCreateArt(false)} />
             </motion.div>
           </motion.div>
         )}
