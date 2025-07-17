@@ -1011,3 +1011,5 @@ const GraphicsEditor = ({ project, user, onBack }) => {
     </div>
   );
 };
+
+export default StudioPro;
