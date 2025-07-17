@@ -2083,7 +2083,404 @@ const suggestedUsers = [
   }
 ];
 
-// Cur10saX Art Page Component
+// Creation Studio Component for Cur10saX
+export const CreationStudio = ({ onClose }) => {
+  const [activeTab, setActiveTab] = useState('images');
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedContent, setGeneratedContent] = useState(null);
+  const [showPromptIndex, setShowPromptIndex] = useState(false);
+  const [showLogoManager, setShowLogoManager] = useState(false);
+  const [selectedLogo, setSelectedLogo] = useState(null);
+  const [appliedLogo, setAppliedLogo] = useState(null);
+
+  const creationTabs = [
+    { id: 'images', label: 'AI Images', icon: PhotoIcon, color: 'from-blue-500 to-purple-600' },
+    { id: 'videos', label: 'AI Videos', icon: PlayIcon, color: 'from-purple-500 to-pink-600' },
+    { id: 'logos', label: 'Logo Creator', icon: PaintBrushIcon, color: 'from-green-500 to-teal-600' },
+    { id: 'templates', label: 'Templates', icon: SparklesIcon, color: 'from-yellow-500 to-orange-600' }
+  ];
+
+  const imageStyles = [
+    'Photorealistic', 'Digital Art', 'Oil Painting', 'Watercolor', 'Pencil Sketch',
+    'Cyberpunk', 'Fantasy', 'Abstract', 'Minimalist', 'Vintage', 'Comic Book', 'Anime'
+  ];
+
+  const videoStyles = [
+    'Cinematic', 'Animation', 'Time-lapse', 'Slow Motion', 'Abstract Motion',
+    'Particle Effects', 'Morphing', 'Kaleidoscope', 'Fluid Dynamics', 'Geometric'
+  ];
+
+  const logoStyles = [
+    'Modern', 'Vintage', 'Minimalist', 'Geometric', 'Organic', 'Tech',
+    'Elegant', 'Bold', 'Playful', 'Professional', 'Artistic', 'Futuristic'
+  ];
+
+  const handleGenerate = async () => {
+    if (!aiPrompt.trim()) return;
+    
+    setIsGenerating(true);
+    
+    setTimeout(() => {
+      switch (activeTab) {
+        case 'images':
+          setGeneratedContent({
+            type: 'image',
+            url: 'https://images.unsplash.com/photo-1590870845755-4c3c46615dd1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwzfHxBSSUyMGFydHxlbnwwfHx8Ymx1ZXwxNzUyNzg3ODQwfDA&ixlib=rb-4.1.0&q=85',
+            prompt: aiPrompt,
+            style: 'Digital Art',
+            resolution: '1024x1024'
+          });
+          break;
+        case 'videos':
+          setGeneratedContent({
+            type: 'video',
+            url: 'https://images.pexels.com/photos/8254894/pexels-photo-8254894.jpeg',
+            prompt: aiPrompt,
+            style: 'Cinematic',
+            duration: '15 seconds',
+            fps: '30'
+          });
+          break;
+        case 'logos':
+          setGeneratedContent({
+            type: 'logo',
+            url: 'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85&w=200&h=200',
+            prompt: aiPrompt,
+            style: 'Modern',
+            format: 'PNG',
+            transparent: true
+          });
+          break;
+        default:
+          break;
+      }
+      setIsGenerating(false);
+      toast.success(`${activeTab === 'images' ? 'Image' : activeTab === 'videos' ? 'Video' : 'Logo'} generated successfully!`);
+    }, 2000);
+  };
+
+  const handleSelectPrompt = (prompt) => {
+    setAiPrompt(prompt);
+    setShowPromptIndex(false);
+  };
+
+  const handleStyleClick = (style) => {
+    const stylePrompt = `${aiPrompt} in ${style} style`;
+    setAiPrompt(stylePrompt);
+  };
+
+  const getCurrentStyles = () => {
+    switch (activeTab) {
+      case 'images': return imageStyles;
+      case 'videos': return videoStyles;
+      case 'logos': return logoStyles;
+      default: return imageStyles;
+    }
+  };
+
+  const renderImageCreation = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {getCurrentStyles().map((style) => (
+          <button
+            key={style}
+            onClick={() => handleStyleClick(style)}
+            className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-800/30 dark:hover:to-purple-800/30 transition-all duration-200 text-sm font-medium"
+          >
+            {style}
+          </button>
+        ))}
+      </div>
+      
+      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <h4 className="font-semibold mb-2">✨ Pro Tips for AI Images:</h4>
+        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+          <li>• Be specific about colors, lighting, and composition</li>
+          <li>• Use descriptive adjectives (vibrant, ethereal, dramatic)</li>
+          <li>• Include camera angles (close-up, wide shot, bird's eye)</li>
+          <li>• Mention art styles (impressionist, hyperrealistic, stylized)</li>
+        </ul>
+      </div>
+    </div>
+  );
+
+  const renderVideoCreation = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {getCurrentStyles().map((style) => (
+          <button
+            key={style}
+            onClick={() => handleStyleClick(style)}
+            className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-800/30 dark:hover:to-pink-800/30 transition-all duration-200 text-sm font-medium"
+          >
+            {style}
+          </button>
+        ))}
+      </div>
+      
+      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <h4 className="font-semibold mb-2">🎬 Video Creation Tips:</h4>
+        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+          <li>• Describe the motion you want (flowing, rotating, pulsing)</li>
+          <li>• Specify duration and pacing (fast, slow, rhythmic)</li>
+          <li>• Include transitions and effects</li>
+          <li>• Consider aspect ratio (16:9, 1:1, 9:16)</li>
+        </ul>
+      </div>
+    </div>
+  );
+
+  const renderLogoCreation = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {getCurrentStyles().map((style) => (
+          <button
+            key={style}
+            onClick={() => handleStyleClick(style)}
+            className="p-3 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg hover:from-green-100 hover:to-teal-100 dark:hover:from-green-800/30 dark:hover:to-teal-800/30 transition-all duration-200 text-sm font-medium"
+          >
+            {style}
+          </button>
+        ))}
+      </div>
+      
+      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <h4 className="font-semibold mb-2">🎨 Logo Design Tips:</h4>
+        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+          <li>• Keep it simple and memorable</li>
+          <li>• Specify colors and typography preferences</li>
+          <li>• Include company/brand name and industry</li>
+          <li>• Consider scalability (looks good small and large)</li>
+        </ul>
+      </div>
+    </div>
+  );
+
+  const renderTemplatesCreation = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {[
+          { name: 'Social Media Post', desc: 'Instagram, Twitter, Facebook posts' },
+          { name: 'YouTube Thumbnail', desc: 'Eye-catching video thumbnails' },
+          { name: 'Business Card', desc: 'Professional business cards' },
+          { name: 'Poster Design', desc: 'Event and promotional posters' },
+          { name: 'Website Header', desc: 'Hero sections and banners' },
+          { name: 'Product Mockup', desc: 'Showcase your products' }
+        ].map((template) => (
+          <div
+            key={template.name}
+            className="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg hover:from-yellow-100 hover:to-orange-100 dark:hover:from-yellow-800/30 dark:hover:to-orange-800/30 transition-all duration-200 cursor-pointer"
+          >
+            <h4 className="font-semibold mb-1">{template.name}</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{template.desc}</p>
+          </div>
+        ))}
+      </div>
+      
+      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <h4 className="font-semibold mb-2">📐 Template Tips:</h4>
+        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+          <li>• Choose the right size for your platform</li>
+          <li>• Use consistent branding elements</li>
+          <li>• Consider your target audience</li>
+          <li>• Include clear call-to-action if needed</li>
+        </ul>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Creation Type Tabs */}
+      <div className="flex space-x-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+        {creationTabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-lg transition-all duration-200 ${
+              activeTab === tab.id
+                ? `bg-gradient-to-r ${tab.color} text-white shadow-lg`
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+            }`}
+          >
+            <tab.icon className="w-5 h-5" />
+            <span className="font-medium">{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Style Selection */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Choose a Style</h3>
+        {activeTab === 'images' && renderImageCreation()}
+        {activeTab === 'videos' && renderVideoCreation()}
+        {activeTab === 'logos' && renderLogoCreation()}
+        {activeTab === 'templates' && renderTemplatesCreation()}
+      </div>
+
+      {/* AI Prompt Input */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Describe Your Vision</h3>
+          <button
+            onClick={() => setShowPromptIndex(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-800/50 transition-colors"
+          >
+            <MagnifyingGlassIcon className="w-4 h-4" />
+            <span className="text-sm">Browse Prompts</span>
+          </button>
+        </div>
+        
+        <textarea
+          value={aiPrompt}
+          onChange={(e) => setAiPrompt(e.target.value)}
+          placeholder={`Describe the ${activeTab === 'images' ? 'image' : activeTab === 'videos' ? 'video' : activeTab === 'logos' ? 'logo' : 'design'} you want to create...`}
+          className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white resize-none"
+          rows="4"
+        />
+        
+        <div className="flex justify-between items-center">
+          <div className="flex space-x-3">
+            <button
+              onClick={() => setShowPromptIndex(true)}
+              className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              Community Prompts
+            </button>
+            {activeTab === 'logos' && (
+              <button
+                onClick={() => setShowLogoManager(true)}
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                Logo Library
+              </button>
+            )}
+          </div>
+          
+          <button
+            onClick={handleGenerate}
+            disabled={isGenerating || !aiPrompt.trim()}
+            className={`px-8 py-3 bg-gradient-to-r ${
+              creationTabs.find(tab => tab.id === activeTab)?.color
+            } text-white rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium flex items-center space-x-2`}
+          >
+            {isGenerating ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <SparklesIcon className="w-5 h-5" />
+            )}
+            <span>
+              {isGenerating ? 'Generating...' : `Generate ${activeTab === 'images' ? 'Image' : activeTab === 'videos' ? 'Video' : activeTab === 'logos' ? 'Logo' : 'Design'}`}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Generated Content Preview */}
+      {generatedContent && (
+        <div className="p-6 border-2 border-purple-200 dark:border-purple-800 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+          <h3 className="text-lg font-semibold mb-4">✨ Your Creation</h3>
+          
+          {generatedContent.type === 'image' && (
+            <div className="space-y-4">
+              <img
+                src={generatedContent.url}
+                alt="Generated artwork"
+                className="w-full h-80 object-cover rounded-lg"
+              />
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-medium">Style:</span> {generatedContent.style}
+                </div>
+                <div>
+                  <span className="font-medium">Resolution:</span> {generatedContent.resolution}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {generatedContent.type === 'video' && (
+            <div className="space-y-4">
+              <div className="relative w-full h-80 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                <div className="text-center">
+                  <PlayIcon className="w-16 h-16 text-purple-500 mx-auto mb-2" />
+                  <p className="text-gray-600 dark:text-gray-400">Video Preview</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="font-medium">Style:</span> {generatedContent.style}
+                </div>
+                <div>
+                  <span className="font-medium">Duration:</span> {generatedContent.duration}
+                </div>
+                <div>
+                  <span className="font-medium">FPS:</span> {generatedContent.fps}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {generatedContent.type === 'logo' && (
+            <div className="space-y-4">
+              <div className="flex justify-center">
+                <div className="w-48 h-48 bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center">
+                  <img
+                    src={generatedContent.url}
+                    alt="Generated logo"
+                    className="w-32 h-32 object-contain"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="font-medium">Style:</span> {generatedContent.style}
+                </div>
+                <div>
+                  <span className="font-medium">Format:</span> {generatedContent.format}
+                </div>
+                <div>
+                  <span className="font-medium">Background:</span> {generatedContent.transparent ? 'Transparent' : 'Solid'}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div className="flex justify-between items-center mt-6">
+            <div className="flex space-x-3">
+              <button className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                Download
+              </button>
+              <button className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                Share
+              </button>
+            </div>
+            
+            <button className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200">
+              Post to DOMin8X
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Prompt Index Modal */}
+      <PromptIndex
+        isOpen={showPromptIndex}
+        onClose={() => setShowPromptIndex(false)}
+        onSelectPrompt={handleSelectPrompt}
+        contentType={activeTab}
+      />
+
+      {/* Logo Manager Modal */}
+      <LogoManager
+        isOpen={showLogoManager}
+        onClose={() => setShowLogoManager(false)}
+        onSelectLogo={() => {}}
+      />
+    </div>
+  );
+};
 export const Cur10saX = ({ darkMode, currentUser }) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('trending');
