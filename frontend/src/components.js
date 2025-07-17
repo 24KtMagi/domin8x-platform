@@ -1237,7 +1237,8 @@ export const Feed = ({ darkMode }) => {
       isLiked: false,
       isRetweeted: false,
       isBookmarked: false,
-      type: newPost.generatedContent?.type || 'text'
+      type: newPost.generatedContent?.type || 'text',
+      generatedContent: newPost.generatedContent
     };
 
     if (newPost.generatedContent?.type === 'image') {
