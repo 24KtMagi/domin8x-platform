@@ -1304,8 +1304,8 @@ export const PromptIndex = ({ isOpen, onClose, onSelectPrompt, contentType }) =>
     communityPrompts.unshift(prompt);
     
     // Save to localStorage
-    const savedPrompts = JSON.parse(localStorage.getItem('mirrorx-prompts') || '[]');
-    localStorage.setItem('mirrorx-prompts', JSON.stringify([prompt, ...savedPrompts]));
+    const savedPrompts = JSON.parse(localStorage.getItem('domin8x-prompts') || '[]');
+    localStorage.setItem('domin8x-prompts', JSON.stringify([prompt, ...savedPrompts]));
 
     toast.success('Prompt added to community index!');
     setNewPrompt('');
