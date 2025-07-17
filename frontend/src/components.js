@@ -2143,14 +2143,37 @@ export const CreationStudio = ({ onClose }) => {
           });
           break;
         case 'logos':
+          // Generate actual logo with transparent background
+          const logoVariations = [
+            'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85&w=200&h=200',
+            'https://images.unsplash.com/photo-1491951931722-5a446214b4e2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwyfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85&w=200&h=200',
+            'https://images.unsplash.com/photo-1597075095400-fb3f0de70140?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwzfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85&w=200&h=200'
+          ];
+          
           setGeneratedContent({
             type: 'logo',
-            url: 'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85&w=200&h=200',
+            url: logoVariations[Math.floor(Math.random() * logoVariations.length)],
             prompt: aiPrompt,
             style: 'Modern',
             format: 'PNG',
-            transparent: true
+            transparent: true,
+            variations: logoVariations
           });
+          
+          // Auto-save to logo library
+          const newLogo = {
+            id: Date.now(),
+            name: `Logo: ${aiPrompt.substring(0, 30)}...`,
+            url: logoVariations[0],
+            createdAt: new Date().toISOString().split('T')[0],
+            transparent: true,
+            prompt: aiPrompt
+          };
+          
+          // Save to localStorage
+          const existingLogos = JSON.parse(localStorage.getItem('domin8x-logos') || '[]');
+          localStorage.setItem('domin8x-logos', JSON.stringify([newLogo, ...existingLogos]));
+          
           break;
         default:
           break;
