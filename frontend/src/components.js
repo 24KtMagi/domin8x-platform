@@ -2499,11 +2499,35 @@ export const CreationStudio = ({ onClose }) => {
           
           {generatedContent.type === 'image' && (
             <div className="space-y-4">
-              <img
-                src={generatedContent.url}
-                alt="Generated artwork"
-                className="w-full h-80 object-cover rounded-lg"
-              />
+              <div className="relative">
+                <img
+                  src={generatedContent.url}
+                  alt="Generated artwork"
+                  className="w-full h-80 object-cover rounded-lg"
+                />
+                {appliedLogo && (
+                  <div 
+                    className="absolute"
+                    style={{
+                      bottom: '10px',
+                      left: '10px',
+                      width: `${appliedLogo.size}px`,
+                      height: `${appliedLogo.size}px`,
+                      opacity: appliedLogo.opacity
+                    }}
+                  >
+                    <img
+                      src={appliedLogo.logo.url}
+                      alt={appliedLogo.logo.name}
+                      className="w-full h-full object-contain"
+                      style={{
+                        backgroundColor: appliedLogo.logo.transparent ? 'transparent' : 'white',
+                        borderRadius: '8px'
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="font-medium">Style:</span> {generatedContent.style}
@@ -2512,6 +2536,13 @@ export const CreationStudio = ({ onClose }) => {
                   <span className="font-medium">Resolution:</span> {generatedContent.resolution}
                 </div>
               </div>
+              {appliedLogo && (
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <p className="text-sm text-blue-800 dark:text-blue-400">
+                    🎨 Logo overlay applied: {appliedLogo.logo.name} ({appliedLogo.size}px, {Math.round(appliedLogo.opacity * 100)}% opacity)
+                  </p>
+                </div>
+              )}
             </div>
           )}
           
@@ -2522,6 +2553,28 @@ export const CreationStudio = ({ onClose }) => {
                   <PlayIcon className="w-16 h-16 text-purple-500 mx-auto mb-2" />
                   <p className="text-gray-600 dark:text-gray-400">Video Preview</p>
                 </div>
+                {appliedLogo && (
+                  <div 
+                    className="absolute"
+                    style={{
+                      bottom: '10px',
+                      left: '10px',
+                      width: `${appliedLogo.size}px`,
+                      height: `${appliedLogo.size}px`,
+                      opacity: appliedLogo.opacity
+                    }}
+                  >
+                    <img
+                      src={appliedLogo.logo.url}
+                      alt={appliedLogo.logo.name}
+                      className="w-full h-full object-contain"
+                      style={{
+                        backgroundColor: appliedLogo.logo.transparent ? 'transparent' : 'white',
+                        borderRadius: '8px'
+                      }}
+                    />
+                  </div>
+                )}
               </div>
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div>
@@ -2534,6 +2587,13 @@ export const CreationStudio = ({ onClose }) => {
                   <span className="font-medium">FPS:</span> {generatedContent.fps}
                 </div>
               </div>
+              {appliedLogo && (
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <p className="text-sm text-blue-800 dark:text-blue-400">
+                    🎨 Logo overlay applied: {appliedLogo.logo.name} ({appliedLogo.size}px, {Math.round(appliedLogo.opacity * 100)}% opacity)
+                  </p>
+                </div>
+              )}
             </div>
           )}
           
