@@ -172,7 +172,7 @@ export const AuthPage = ({ onAuthSuccess }) => {
         );
 
         if (user) {
-          localStorage.setItem('mirrorx-user', JSON.stringify(user));
+          localStorage.setItem('domin8x-user', JSON.stringify(user));
           toast.success('Welcome back!');
           onAuthSuccess(user);
         } else {
