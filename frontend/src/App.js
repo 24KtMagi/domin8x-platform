@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { Navigation, Feed, Sidebar, AuthPage, Leaderboard, ChallengeCreator, Cur10saX } from './components';
+import StudioPro from './StudioPro';
+import Cur10saXBuilder from './Cur10saXBuilder';
 import './App.css';
 
 function App() {
