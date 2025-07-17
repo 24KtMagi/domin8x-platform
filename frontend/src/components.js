@@ -151,7 +151,7 @@ export const AuthPage = ({ onAuthSuccess }) => {
           password: formData.password,
           name: formData.name,
           avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face',
-          bio: 'New MirrorX creator',
+          bio: 'New DOMin8X creator',
           joinDate: new Date().toISOString().split('T')[0],
           followers: 0,
           following: 0,
