@@ -2387,17 +2387,18 @@ export const Cur10saX = ({ darkMode, currentUser }) => {
     </div>
   );
 };
-export const Navigation = ({ darkMode, setDarkMode, currentUser, onSignOut, onShowLeaderboard }) => {
+export const Navigation = ({ darkMode, setDarkMode, currentUser, onSignOut, onShowLeaderboard, onNavigate, currentPage }) => {
   const [showProfile, setShowProfile] = useState(false);
 
   const navItems = [
-    { icon: HomeIcon, label: 'Home', active: true },
-    { icon: MagnifyingGlassIcon, label: 'Explore' },
-    { icon: BellIcon, label: 'Notifications' },
-    { icon: InboxIcon, label: 'Messages' },
-    { icon: BookmarkIcon, label: 'Bookmarks' },
+    { icon: HomeIcon, label: 'Home', page: 'home', active: currentPage === 'home' },
+    { icon: PhotoIcon, label: 'Cur10saX', page: 'cur10sax', active: currentPage === 'cur10sax' },
+    { icon: MagnifyingGlassIcon, label: 'Explore', page: 'explore', active: currentPage === 'explore' },
+    { icon: BellIcon, label: 'Notifications', page: 'notifications', active: currentPage === 'notifications' },
+    { icon: InboxIcon, label: 'Messages', page: 'messages', active: currentPage === 'messages' },
+    { icon: BookmarkIcon, label: 'Bookmarks', page: 'bookmarks', active: currentPage === 'bookmarks' },
     { icon: UserIcon, label: 'Profile', onClick: () => setShowProfile(true) },
-    { icon: Cog6ToothIcon, label: 'Settings' }
+    { icon: Cog6ToothIcon, label: 'Settings', page: 'settings', active: currentPage === 'settings' }
   ];
 
   const handleSignOut = () => {
@@ -2425,7 +2426,7 @@ export const Navigation = ({ darkMode, setDarkMode, currentUser, onSignOut, onSh
             {navItems.map((item) => (
               <button
                 key={item.label}
-                onClick={item.onClick}
+                onClick={item.onClick || (() => onNavigate(item.page))}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-full transition-all duration-200 ${
                   item.active
                     ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
@@ -2434,6 +2435,11 @@ export const Navigation = ({ darkMode, setDarkMode, currentUser, onSignOut, onSh
               >
                 <item.icon className="w-6 h-6" />
                 <span className="font-medium">{item.label}</span>
+                {item.label === 'Cur10saX' && (
+                  <span className="px-2 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs rounded-full">
+                    New
+                  </span>
+                )}
               </button>
             ))}
             
@@ -2520,7 +2526,7 @@ export const Navigation = ({ darkMode, setDarkMode, currentUser, onSignOut, onSh
               <UserProfile 
                 user={currentUser} 
                 onUpdateProfile={(updatedUser) => {
-                  localStorage.setItem('mirrorx-user', JSON.stringify(updatedUser));
+                  localStorage.setItem('domin8x-user', JSON.stringify(updatedUser));
                   // Update current user state in parent component
                   window.location.reload(); // Simple refresh for demo
                 }}
