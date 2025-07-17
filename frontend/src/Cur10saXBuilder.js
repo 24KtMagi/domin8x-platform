@@ -270,7 +270,7 @@ const Cur10saXBuilder = () => {
             <div className="flex items-center space-x-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
               {[
                 { id: 'desktop', icon: ComputerDesktopIcon },
-                { id: 'tablet', icon: TabletIcon },
+                { id: 'tablet', icon: DeviceTabletIcon },
                 { id: 'mobile', icon: DevicePhoneMobileIcon }
               ].map((device) => (
                 <button
