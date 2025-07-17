@@ -988,17 +988,39 @@ export const Tweet = ({ tweet, onLike, onRetweet, onBookmark }) => {
           
           {/* Media Content */}
           {tweet.type === 'image' && tweet.image && (
-            <div className="mt-3 rounded-2xl overflow-hidden">
+            <div className="mt-3 rounded-2xl overflow-hidden relative">
               <img
                 src={tweet.image}
                 alt="Tweet image"
                 className="w-full h-80 object-cover"
               />
+              {tweet.generatedContent?.appliedLogo && (
+                <div 
+                  className="absolute"
+                  style={{
+                    bottom: '10px',
+                    left: '10px',
+                    width: `${tweet.generatedContent.appliedLogo.size}px`,
+                    height: `${tweet.generatedContent.appliedLogo.size}px`,
+                    opacity: tweet.generatedContent.appliedLogo.opacity
+                  }}
+                >
+                  <img
+                    src={tweet.generatedContent.appliedLogo.logo.url}
+                    alt={tweet.generatedContent.appliedLogo.logo.name}
+                    className="w-full h-full object-contain"
+                    style={{
+                      backgroundColor: tweet.generatedContent.appliedLogo.logo.transparent ? 'transparent' : 'white',
+                      borderRadius: '8px'
+                    }}
+                  />
+                </div>
+              )}
             </div>
           )}
           
           {tweet.type === 'music' && tweet.music && (
-            <div className="mt-3 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl">
+            <div className="mt-3 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl relative">
               <div className="flex items-center space-x-4">
                 <button
                   onClick={handleMusicPlay}
@@ -1023,6 +1045,28 @@ export const Tweet = ({ tweet, onLike, onRetweet, onBookmark }) => {
               <div className="mt-3 h-16 bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800 to-purple-800 rounded-lg flex items-center justify-center">
                 <span className="text-xs text-gray-600 dark:text-gray-400">♪ ♫ ♪ ♫ ♪ ♫ ♪</span>
               </div>
+              {tweet.generatedContent?.appliedLogo && (
+                <div 
+                  className="absolute"
+                  style={{
+                    bottom: '10px',
+                    left: '10px',
+                    width: `${tweet.generatedContent.appliedLogo.size}px`,
+                    height: `${tweet.generatedContent.appliedLogo.size}px`,
+                    opacity: tweet.generatedContent.appliedLogo.opacity
+                  }}
+                >
+                  <img
+                    src={tweet.generatedContent.appliedLogo.logo.url}
+                    alt={tweet.generatedContent.appliedLogo.logo.name}
+                    className="w-full h-full object-contain"
+                    style={{
+                      backgroundColor: tweet.generatedContent.appliedLogo.logo.transparent ? 'transparent' : 'white',
+                      borderRadius: '8px'
+                    }}
+                  />
+                </div>
+              )}
             </div>
           )}
           
