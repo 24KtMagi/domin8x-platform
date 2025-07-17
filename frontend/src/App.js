@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { Navigation, Feed, Sidebar } from './components';
+import { Navigation, Feed, Sidebar, AuthPage, Leaderboard, ChallengeCreator } from './components';
 import './App.css';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showChallengeCreator, setShowChallengeCreator] = useState(false);
 
-  // Initialize dark mode from localStorage
+  // Initialize dark mode and user from localStorage
   useEffect(() => {
     const savedDarkMode = localStorage.getItem('darkMode');
     if (savedDarkMode) {
       setDarkMode(JSON.parse(savedDarkMode));
+    }
+
+    const savedUser = localStorage.getItem('mirrorx-user');
+    if (savedUser) {
+      const user = JSON.parse(savedUser);
+      setCurrentUser(user);
+      setIsAuthenticated(true);
     }
   }, []);
 
@@ -25,11 +36,36 @@ function App() {
     }
   }, [darkMode]);
 
-  const currentUser = {
-    name: 'You',
-    username: 'yourhandle',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face'
+  const handleAuthSuccess = (user) => {
+    setCurrentUser(user);
+    setIsAuthenticated(true);
   };
+
+  const handleSignOut = () => {
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+  };
+
+  // If not authenticated, show auth page
+  if (!isAuthenticated) {
+    return (
+      <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
+        <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+          <AuthPage onAuthSuccess={handleAuthSuccess} />
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              className: darkMode ? 'dark' : '',
+              style: {
+                background: darkMode ? '#1f2937' : '#ffffff',
+                color: darkMode ? '#f9fafb' : '#111827',
+              },
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
@@ -40,6 +76,8 @@ function App() {
               darkMode={darkMode}
               setDarkMode={setDarkMode}
               currentUser={currentUser}
+              onSignOut={handleSignOut}
+              onShowLeaderboard={() => setShowLeaderboard(true)}
             />
             <main className="flex-1 flex">
               <Routes>
@@ -47,7 +85,7 @@ function App() {
                   path="/"
                   element={
                     <>
-                      <Feed darkMode={darkMode} />
+                      <Feed darkMode={darkMode} currentUser={currentUser} />
                       <Sidebar />
                     </>
                   }
@@ -55,6 +93,19 @@ function App() {
               </Routes>
             </main>
           </div>
+          
+          {/* Leaderboard Modal */}
+          <Leaderboard
+            isOpen={showLeaderboard}
+            onClose={() => setShowLeaderboard(false)}
+          />
+          
+          {/* Challenge Creator Modal */}
+          <ChallengeCreator
+            isOpen={showChallengeCreator}
+            onClose={() => setShowChallengeCreator(false)}
+          />
+          
           <Toaster
             position="bottom-right"
             toastOptions={{
