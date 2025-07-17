@@ -23,7 +23,7 @@ import {
   PlayIcon,
   PauseIcon,
   VolumeXIcon,
-  VolumeUpIcon
+  SpeakerWaveIcon
 } from '@heroicons/react/24/outline';
 import {
   HeartIcon as HeartIconSolid,
