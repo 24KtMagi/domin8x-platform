@@ -2646,7 +2646,16 @@ export const CreationStudio = ({ onClose }) => {
       <LogoManager
         isOpen={showLogoManager}
         onClose={() => setShowLogoManager(false)}
-        onSelectLogo={() => {}}
+        onSelectLogo={handleSelectLogo}
+      />
+
+      {/* Logo Placement Modal */}
+      <LogoOverlay
+        isOpen={showLogoPlacement}
+        onClose={() => setShowLogoPlacement(false)}
+        onApplyLogo={handleApplyLogo}
+        selectedLogo={selectedLogo}
+        imageUrl={generatedContent?.url}
       />
     </div>
   );
