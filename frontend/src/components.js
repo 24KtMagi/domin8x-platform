@@ -36,7 +36,680 @@ import {
   PlayIcon as PlayIconSolid
 } from '@heroicons/react/24/solid';
 
-// Community Prompt Index Data
+// Challenge and Leaderboard Data
+const challenges = [
+  {
+    id: 1,
+    title: "AI Art Challenge: Futuristic Cities",
+    type: "Art",
+    category: "image",
+    description: "Create stunning AI art depicting futuristic cityscapes with neon lights and flying vehicles",
+    hashtags: ["#FuturisticCity", "#AIArt", "#Cyberpunk", "#NeonLights"],
+    startDate: "2024-01-15",
+    endDate: "2024-01-22",
+    status: "active",
+    prize: "Winner gets featured + $100 credit",
+    participants: 156,
+    submissions: 89,
+    creator: "MirrorX Team",
+    rules: "Must use AI generation, original prompts only, single image submissions",
+    judgingCriteria: "Creativity, Technical Quality, Theme Adherence"
+  },
+  {
+    id: 2,
+    title: "Epic Music Challenge: Hero's Journey",
+    type: "Music",
+    category: "music",
+    description: "Compose an epic orchestral piece that tells the story of a hero's adventure",
+    hashtags: ["#EpicMusic", "#HeroJourney", "#Orchestral", "#Adventure"],
+    startDate: "2024-01-10",
+    endDate: "2024-01-20",
+    status: "active",
+    prize: "Winner gets music license deal",
+    participants: 78,
+    submissions: 45,
+    creator: "SoundMasters Guild",
+    rules: "2-3 minute compositions, orchestral style, AI-generated with personal touch",
+    judgingCriteria: "Musical Composition, Emotional Impact, Technical Execution"
+  },
+  {
+    id: 3,
+    title: "Sports Photography: Motion Capture",
+    type: "Sports",
+    category: "image",
+    description: "Capture or create dynamic sports moments showing peak athletic performance",
+    hashtags: ["#SportsPhoto", "#MotionCapture", "#Athletics", "#Dynamic"],
+    startDate: "2024-01-05",
+    endDate: "2024-01-15",
+    status: "completed",
+    prize: "Sports equipment bundle",
+    participants: 234,
+    submissions: 167,
+    creator: "SportsFan Community",
+    rules: "Sports theme, action shots, can be AI-generated or real photography",
+    judgingCriteria: "Action Capture, Composition, Impact"
+  },
+  {
+    id: 4,
+    title: "Daily Prompt Challenge: Iridescent Dreams",
+    type: "Art",
+    category: "image",
+    description: "Create art using 'iridescent' theme - anything that shimmers and shifts colors",
+    hashtags: ["#Iridescent", "#DailyChallenge", "#Prismatic", "#Shimmer"],
+    startDate: "2024-01-16",
+    endDate: "2024-01-16",
+    status: "active",
+    prize: "Daily winner badge + spotlight",
+    participants: 89,
+    submissions: 56,
+    creator: "Daily Challenges Bot",
+    rules: "One submission per user, must include iridescent elements",
+    judgingCriteria: "Use of iridescent effects, creativity, visual appeal"
+  }
+];
+
+const leaderboardData = [
+  {
+    challengeId: 1,
+    rankings: [
+      {
+        rank: 1,
+        userId: "aiartist_pro",
+        username: "aiartist_pro",
+        name: "Alex Chen",
+        avatar: "https://images.unsplash.com/photo-1494790108755-2616b332c7c6?w=40&h=40&fit=crop&crop=face",
+        score: 2847,
+        submissions: 3,
+        votes: 234,
+        badges: ["🏆", "🎨", "⚡"],
+        latestSubmission: "Neon Metropolis 2099"
+      },
+      {
+        rank: 2,
+        userId: "cyber_creator",
+        username: "cyber_creator",
+        name: "Jordan Kim",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+        score: 2534,
+        submissions: 2,
+        votes: 198,
+        badges: ["🥈", "🎨", "🌟"],
+        latestSubmission: "Digital Skyline Dreams"
+      },
+      {
+        rank: 3,
+        userId: "future_artist",
+        username: "future_artist",
+        name: "Sam Rivera",
+        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face",
+        score: 2156,
+        submissions: 4,
+        votes: 167,
+        badges: ["🥉", "🎨", "💫"],
+        latestSubmission: "Cyber Streets 3000"
+      },
+      {
+        rank: 4,
+        userId: "neon_master",
+        username: "neon_master",
+        name: "Riley Park",
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face",
+        score: 1876,
+        submissions: 2,
+        votes: 145,
+        badges: ["🎨", "⚡"],
+        latestSubmission: "Holographic City"
+      },
+      {
+        rank: 5,
+        userId: "pixel_pioneer",
+        username: "pixel_pioneer",
+        name: "Casey Wong",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face",
+        score: 1654,
+        submissions: 1,
+        votes: 134,
+        badges: ["🎨", "🌟"],
+        latestSubmission: "Tomorrow's Horizon"
+      }
+    ]
+  },
+  {
+    challengeId: 2,
+    rankings: [
+      {
+        rank: 1,
+        userId: "epic_composer",
+        username: "epic_composer",
+        name: "Morgan Lee",
+        avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=40&h=40&fit=crop&crop=face",
+        score: 3124,
+        submissions: 2,
+        votes: 267,
+        badges: ["🏆", "🎵", "⚡"],
+        latestSubmission: "Legend of the Crystal Sword"
+      },
+      {
+        rank: 2,
+        userId: "sound_alchemist",
+        username: "sound_alchemist",
+        name: "Taylor Singh",
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face",
+        score: 2876,
+        submissions: 3,
+        votes: 234,
+        badges: ["🥈", "🎵", "🌟"],
+        latestSubmission: "Rise of the Phoenix"
+      },
+      {
+        rank: 3,
+        userId: "orchestra_ai",
+        username: "orchestra_ai",
+        name: "Quinn Adams",
+        avatar: "https://images.unsplash.com/photo-1545167622-3a6ac756afa4?w=40&h=40&fit=crop&crop=face",
+        score: 2543,
+        submissions: 1,
+        votes: 203,
+        badges: ["🥉", "🎵", "💫"],
+        latestSubmission: "Destiny's Call"
+      }
+    ]
+  }
+];
+
+// Leaderboard Component
+export const Leaderboard = ({ isOpen, onClose }) => {
+  const [selectedChallenge, setSelectedChallenge] = useState(challenges[0]);
+  const [activeTab, setActiveTab] = useState('active');
+  const [showCreateChallenge, setShowCreateChallenge] = useState(false);
+
+  const getCurrentRankings = () => {
+    return leaderboardData.find(data => data.challengeId === selectedChallenge.id)?.rankings || [];
+  };
+
+  const getFilteredChallenges = () => {
+    switch (activeTab) {
+      case 'active':
+        return challenges.filter(c => c.status === 'active');
+      case 'completed':
+        return challenges.filter(c => c.status === 'completed');
+      case 'upcoming':
+        return challenges.filter(c => c.status === 'upcoming');
+      default:
+        return challenges;
+    }
+  };
+
+  const getRankEmoji = (rank) => {
+    switch (rank) {
+      case 1: return '🏆';
+      case 2: return '🥈';
+      case 3: return '🥉';
+      default: return '🏅';
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'completed': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      case 'upcoming': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
+  };
+
+  const handleJoinChallenge = (challenge) => {
+    toast.success(`Joined challenge: ${challenge.title}!`);
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-7xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-2xl font-bold">🏆 Challenge Leaderboards</h2>
+                <p className="text-gray-600 dark:text-gray-400">Compete, create, and climb the rankings!</p>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Challenges List */}
+              <div className="lg:col-span-1">
+                <div className="flex space-x-2 mb-4">
+                  <button
+                    onClick={() => setActiveTab('active')}
+                    className={`px-4 py-2 rounded-full text-sm ${
+                      activeTab === 'active'
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    Active
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('completed')}
+                    className={`px-4 py-2 rounded-full text-sm ${
+                      activeTab === 'completed'
+                        ? 'bg-gray-500 text-white'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    Completed
+                  </button>
+                  <button
+                    onClick={() => setShowCreateChallenge(true)}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-full text-sm hover:bg-blue-600 transition-colors"
+                  >
+                    Create
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {getFilteredChallenges().map((challenge) => (
+                    <div
+                      key={challenge.id}
+                      onClick={() => setSelectedChallenge(challenge)}
+                      className={`p-4 rounded-lg cursor-pointer transition-all ${
+                        selectedChallenge.id === challenge.id
+                          ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500'
+                          : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-semibold text-sm">{challenge.title}</h3>
+                        <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(challenge.status)}`}>
+                          {challenge.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{challenge.description}</p>
+                      <div className="flex justify-between items-center text-xs text-gray-500">
+                        <span>{challenge.participants} participants</span>
+                        <span>{challenge.type}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {challenge.hashtags.slice(0, 2).map((tag, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs rounded-full"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Challenge Details & Leaderboard */}
+              <div className="lg:col-span-2">
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6 mb-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold">{selectedChallenge.title}</h3>
+                      <p className="text-gray-600 dark:text-gray-400 mt-1">{selectedChallenge.description}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className={`inline-block px-3 py-1 rounded-full text-sm ${getStatusColor(selectedChallenge.status)}`}>
+                        {selectedChallenge.status}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">{selectedChallenge.participants}</div>
+                      <div className="text-sm text-gray-500">Participants</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600">{selectedChallenge.submissions}</div>
+                      <div className="text-sm text-gray-500">Submissions</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">{selectedChallenge.endDate}</div>
+                      <div className="text-sm text-gray-500">End Date</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-yellow-600">🏆</div>
+                      <div className="text-sm text-gray-500">Prize</div>
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-2 mb-4">
+                    {selectedChallenge.hashtags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4">
+                    <h4 className="font-semibold mb-2">Prize: {selectedChallenge.prize}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      <strong>Rules:</strong> {selectedChallenge.rules}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <strong>Judging:</strong> {selectedChallenge.judgingCriteria}
+                    </p>
+                  </div>
+
+                  {selectedChallenge.status === 'active' && (
+                    <button
+                      onClick={() => handleJoinChallenge(selectedChallenge)}
+                      className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium"
+                    >
+                      Join Challenge
+                    </button>
+                  )}
+                </div>
+
+                {/* Leaderboard */}
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
+                  <h3 className="text-lg font-bold mb-4">🏆 Leaderboard</h3>
+                  <div className="space-y-3">
+                    {getCurrentRankings().map((participant) => (
+                      <motion.div
+                        key={participant.userId}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`flex items-center space-x-4 p-4 rounded-lg ${
+                          participant.rank <= 3
+                            ? 'bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20'
+                            : 'bg-gray-50 dark:bg-gray-700'
+                        }`}
+                      >
+                        <div className="flex-shrink-0">
+                          <div className="text-2xl">{getRankEmoji(participant.rank)}</div>
+                          <div className="text-center text-sm font-bold">#{participant.rank}</div>
+                        </div>
+                        
+                        <img
+                          src={participant.avatar}
+                          alt={participant.name}
+                          className="w-12 h-12 rounded-full"
+                        />
+                        
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2">
+                            <h4 className="font-semibold">{participant.name}</h4>
+                            <span className="text-gray-500 text-sm">@{participant.username}</span>
+                            <div className="flex space-x-1">
+                              {participant.badges.map((badge, index) => (
+                                <span key={index} className="text-sm">{badge}</span>
+                              ))}
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Latest: {participant.latestSubmission}
+                          </p>
+                        </div>
+                        
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-blue-600">{participant.score.toLocaleString()}</div>
+                          <div className="text-sm text-gray-500">
+                            {participant.votes} votes • {participant.submissions} submissions
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+// Challenge Creation Component
+export const ChallengeCreator = ({ isOpen, onClose }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    type: 'Art',
+    category: 'image',
+    description: '',
+    hashtags: '',
+    startDate: '',
+    endDate: '',
+    prize: '',
+    rules: '',
+    judgingCriteria: ''
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.title || !formData.description || !formData.endDate) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    const newChallenge = {
+      id: Date.now(),
+      ...formData,
+      hashtags: formData.hashtags.split(',').map(tag => 
+        tag.trim().startsWith('#') ? tag.trim() : `#${tag.trim()}`
+      ),
+      status: 'upcoming',
+      participants: 0,
+      submissions: 0,
+      creator: 'You'
+    };
+
+    // Add to challenges array (in real app, this would go to backend)
+    challenges.unshift(newChallenge);
+    
+    toast.success('Challenge created successfully!');
+    onClose();
+    
+    // Reset form
+    setFormData({
+      title: '',
+      type: 'Art',
+      category: 'image',
+      description: '',
+      hashtags: '',
+      startDate: '',
+      endDate: '',
+      prize: '',
+      rules: '',
+      judgingCriteria: ''
+    });
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Create New Challenge</h2>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Challenge Title *</label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData({...formData, title: e.target.value})}
+                  placeholder="e.g., AI Art Challenge: Futuristic Cities"
+                  className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Type</label>
+                  <select
+                    value={formData.type}
+                    onChange={(e) => setFormData({...formData, type: e.target.value})}
+                    className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                  >
+                    <option value="Art">Art</option>
+                    <option value="Music">Music</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Photography">Photography</option>
+                    <option value="Writing">Writing</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Category</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                  >
+                    <option value="image">Image</option>
+                    <option value="music">Music</option>
+                    <option value="video">Video</option>
+                    <option value="text">Text</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description *</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  placeholder="Describe your challenge..."
+                  rows="3"
+                  className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white resize-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Hashtags</label>
+                <input
+                  type="text"
+                  value={formData.hashtags}
+                  onChange={(e) => setFormData({...formData, hashtags: e.target.value})}
+                  placeholder="e.g., futuristic, cyberpunk, neon (comma-separated)"
+                  className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Start Date</label>
+                  <input
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                    className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">End Date *</label>
+                  <input
+                    type="date"
+                    value={formData.endDate}
+                    onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                    className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Prize</label>
+                <input
+                  type="text"
+                  value={formData.prize}
+                  onChange={(e) => setFormData({...formData, prize: e.target.value})}
+                  placeholder="e.g., Winner gets featured + $100 credit"
+                  className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Rules</label>
+                <textarea
+                  value={formData.rules}
+                  onChange={(e) => setFormData({...formData, rules: e.target.value})}
+                  placeholder="Challenge rules and requirements..."
+                  rows="2"
+                  className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Judging Criteria</label>
+                <textarea
+                  value={formData.judgingCriteria}
+                  onChange={(e) => setFormData({...formData, judgingCriteria: e.target.value})}
+                  placeholder="How will submissions be judged?"
+                  rows="2"
+                  className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white resize-none"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  Create Challenge
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 const communityPrompts = [
   {
     id: 1,
