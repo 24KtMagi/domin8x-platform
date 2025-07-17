@@ -34,7 +34,8 @@ import {
   AtSymbolIcon,
   KeyIcon,
   ArrowRightOnRectangleIcon,
-  ArrowLeftOnRectangleIcon
+  ArrowLeftOnRectangleIcon,
+  CodeBracketIcon
 } from '@heroicons/react/24/outline';
 import {
   HeartIcon as HeartIconSolid,
