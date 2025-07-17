@@ -2084,76 +2084,149 @@ const suggestedUsers = [
 ];
 
 // Navigation Component
-export const Navigation = ({ darkMode, setDarkMode, currentUser }) => {
+export const Navigation = ({ darkMode, setDarkMode, currentUser, onSignOut, onShowLeaderboard }) => {
+  const [showProfile, setShowProfile] = useState(false);
+
   const navItems = [
     { icon: HomeIcon, label: 'Home', active: true },
     { icon: MagnifyingGlassIcon, label: 'Explore' },
     { icon: BellIcon, label: 'Notifications' },
     { icon: InboxIcon, label: 'Messages' },
     { icon: BookmarkIcon, label: 'Bookmarks' },
-    { icon: UserIcon, label: 'Profile' },
+    { icon: UserIcon, label: 'Profile', onClick: () => setShowProfile(true) },
     { icon: Cog6ToothIcon, label: 'Settings' }
   ];
 
+  const handleSignOut = () => {
+    localStorage.removeItem('mirrorx-user');
+    onSignOut();
+    toast.success('Signed out successfully!');
+  };
+
   return (
-    <div className="h-screen sticky top-0 w-64 p-4 border-r border-gray-200 dark:border-gray-800">
-      <div className="flex flex-col h-full">
-        {/* Logo */}
-        <div className="flex items-center space-x-2 mb-8">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-            <SparklesIcon className="w-5 h-5 text-white" />
+    <>
+      <div className="h-screen sticky top-0 w-64 p-4 border-r border-gray-200 dark:border-gray-800">
+        <div className="flex flex-col h-full">
+          {/* Logo */}
+          <div className="flex items-center space-x-2 mb-8">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <SparklesIcon className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+              MirrorX
+            </span>
           </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-            MirrorX
-          </span>
-        </div>
 
-        {/* Navigation Items */}
-        <nav className="flex-1 space-y-2">
-          {navItems.map((item) => (
+          {/* Navigation Items */}
+          <nav className="flex-1 space-y-2">
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={item.onClick}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-full transition-all duration-200 ${
+                  item.active
+                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <item.icon className="w-6 h-6" />
+                <span className="font-medium">{item.label}</span>
+              </button>
+            ))}
+            
+            {/* Leaderboard Button */}
             <button
-              key={item.label}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-full transition-all duration-200 ${
-                item.active
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                  : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
-              }`}
+              onClick={onShowLeaderboard}
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-all duration-200"
             >
-              <item.icon className="w-6 h-6" />
-              <span className="font-medium">{item.label}</span>
+              <div className="w-6 h-6 flex items-center justify-center">🏆</div>
+              <span className="font-medium">Leaderboard</span>
             </button>
-          ))}
-        </nav>
+          </nav>
 
-        {/* Theme Toggle */}
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="flex items-center space-x-3 px-4 py-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        >
-          {darkMode ? (
-            <SunIcon className="w-6 h-6 text-yellow-500" />
-          ) : (
-            <MoonIcon className="w-6 h-6 text-gray-600" />
-          )}
-          <span className="font-medium">
-            {darkMode ? 'Light Mode' : 'Dark Mode'}
-          </span>
-        </button>
+          {/* Theme Toggle */}
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="flex items-center space-x-3 px-4 py-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            {darkMode ? (
+              <SunIcon className="w-6 h-6 text-yellow-500" />
+            ) : (
+              <MoonIcon className="w-6 h-6 text-gray-600" />
+            )}
+            <span className="font-medium">
+              {darkMode ? 'Light Mode' : 'Dark Mode'}
+            </span>
+          </button>
 
-        {/* User Profile */}
-        <div className="flex items-center space-x-3 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full cursor-pointer">
-          <img
-            src={currentUser.avatar}
-            alt={currentUser.name}
-            className="w-10 h-10 rounded-full"
-          />
-          <div className="flex-1">
-            <p className="font-medium text-sm">{currentUser.name}</p>
-            <p className="text-gray-500 text-xs">@{currentUser.username}</p>
+          {/* User Profile */}
+          <div className="flex items-center justify-between p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full cursor-pointer">
+            <div 
+              className="flex items-center space-x-3 flex-1"
+              onClick={() => setShowProfile(true)}
+            >
+              <div className="relative">
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  className="w-10 h-10 rounded-full"
+                />
+                {currentUser.verified && (
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                    <SparklesIcon className="w-3 h-3 text-white" />
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-sm">{currentUser.name}</p>
+                <p className="text-gray-500 text-xs">@{currentUser.username}</p>
+              </div>
+            </div>
+            <button
+              onClick={handleSignOut}
+              className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full text-red-500 hover:text-red-600 transition-colors"
+              title="Sign Out"
+            >
+              <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Profile Modal */}
+      <AnimatePresence>
+        {showProfile && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative"
+            >
+              <button
+                onClick={() => setShowProfile(false)}
+                className="absolute -top-4 -right-4 p-2 bg-white dark:bg-gray-800 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors z-10"
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+              <UserProfile 
+                user={currentUser} 
+                onUpdateProfile={(updatedUser) => {
+                  localStorage.setItem('mirrorx-user', JSON.stringify(updatedUser));
+                  // Update current user state in parent component
+                  window.location.reload(); // Simple refresh for demo
+                }}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
