@@ -2256,16 +2256,55 @@ export const CreationStudio = ({ onClose }) => {
 
   const renderLogoCreation = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {getCurrentStyles().map((style) => (
-          <button
-            key={style}
-            onClick={() => handleStyleClick(style)}
-            className="p-3 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg hover:from-green-100 hover:to-teal-100 dark:hover:from-green-800/30 dark:hover:to-teal-800/30 transition-all duration-200 text-sm font-medium"
-          >
-            {style}
-          </button>
-        ))}
+      {/* Upload Existing Logo Section */}
+      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-dashed border-blue-300 dark:border-blue-700">
+        <h4 className="font-semibold mb-3 text-blue-800 dark:text-blue-300">📁 Upload Your Existing Logo</h4>
+        <div className="space-y-3">
+          <div className="flex items-center justify-center w-full">
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-blue-300 border-dashed rounded-lg cursor-pointer bg-blue-50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors">
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <CloudArrowUpIcon className="w-8 h-8 text-blue-500 mb-2" />
+                <p className="text-sm text-blue-600 dark:text-blue-400">
+                  <span className="font-semibold">Click to upload</span> or drag and drop
+                </p>
+                <p className="text-xs text-blue-500 dark:text-blue-400">PNG, JPG, SVG (MAX. 5MB)</p>
+              </div>
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={(e) => handleLogoUpload(e.target.files[0])}
+              />
+            </label>
+          </div>
+          <div className="flex justify-between items-center">
+            <button
+              onClick={() => setShowLogoManager(true)}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+            >
+              Browse Logo Library
+            </button>
+            <span className="text-sm text-blue-600 dark:text-blue-400">
+              Or create a new logo below ↓
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* AI Logo Generation */}
+      <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+        <h4 className="font-semibold mb-3 text-green-800 dark:text-green-300">✨ Generate New Logo with AI</h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {getCurrentStyles().map((style) => (
+            <button
+              key={style}
+              onClick={() => handleStyleClick(style)}
+              className="p-3 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg hover:from-green-100 hover:to-teal-100 dark:hover:from-green-800/30 dark:hover:to-teal-800/30 transition-all duration-200 text-sm font-medium border border-green-200 dark:border-green-800"
+            >
+              {style}
+            </button>
+          ))}
+        </div>
       </div>
       
       <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
