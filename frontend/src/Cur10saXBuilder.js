@@ -28,7 +28,8 @@ import {
   DocumentDuplicateIcon,
   ShareIcon,
   Bars3Icon,
-  AdjustmentsHorizontalIcon
+  AdjustmentsHorizontalIcon,
+  ChatBubbleOvalLeftIcon
 } from '@heroicons/react/24/outline';
 
 // Main Cur10saX Website Builder Component
