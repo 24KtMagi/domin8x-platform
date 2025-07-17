@@ -2603,6 +2603,15 @@ export const CreationStudio = ({ onClose }) => {
               <button className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 Share
               </button>
+              {(generatedContent.type === 'image' || generatedContent.type === 'video') && (
+                <button
+                  onClick={() => setShowLogoPlacement(true)}
+                  className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center space-x-2"
+                >
+                  <PaintBrushIcon className="w-4 h-4" />
+                  <span>Add Logo Overlay</span>
+                </button>
+              )}
             </div>
             
             <button className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200">
