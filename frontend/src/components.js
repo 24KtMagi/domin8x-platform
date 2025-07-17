@@ -161,7 +161,7 @@ export const AuthPage = ({ onAuthSuccess }) => {
         };
 
         mockUsers.push(newUser);
-        localStorage.setItem('mirrorx-user', JSON.stringify(newUser));
+        localStorage.setItem('domin8x-user', JSON.stringify(newUser));
         toast.success('Account created successfully!');
         onAuthSuccess(newUser);
       } else {
