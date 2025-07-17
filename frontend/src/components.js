@@ -3023,6 +3023,8 @@ export const Navigation = ({ darkMode, setDarkMode, currentUser, onSignOut, onSh
   const navItems = [
     { icon: HomeIcon, label: 'Home', page: 'home', active: currentPage === 'home' },
     { icon: PhotoIcon, label: 'Cur10saX', page: 'cur10sax', active: currentPage === 'cur10sax' },
+    { icon: CodeBracketIcon, label: 'Builder', page: 'builder', active: currentPage === 'builder' },
+    { icon: PaintBrushIcon, label: 'Studio', page: 'studio', active: currentPage === 'studio' },
     { icon: MagnifyingGlassIcon, label: 'Explore', page: 'explore', active: currentPage === 'explore' },
     { icon: BellIcon, label: 'Notifications', page: 'notifications', active: currentPage === 'notifications' },
     { icon: InboxIcon, label: 'Messages', page: 'messages', active: currentPage === 'messages' },
