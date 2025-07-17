@@ -2359,7 +2359,12 @@ export const CreationStudio = ({ onClose }) => {
         <textarea
           value={aiPrompt}
           onChange={(e) => setAiPrompt(e.target.value)}
-          placeholder={`Describe the ${activeTab === 'images' ? 'image' : activeTab === 'videos' ? 'video' : activeTab === 'logos' ? 'logo' : 'design'} you want to create...`}
+          placeholder={`${
+            activeTab === 'images' ? 'e.g., "cyberpunk cityscape with neon lights and flying cars"' :
+            activeTab === 'videos' ? 'e.g., "flowing abstract particles with purple and blue colors"' :
+            activeTab === 'logos' ? 'e.g., "modern tech company logo with blue and silver colors, minimalist design"' :
+            'e.g., "professional business card with modern typography"'
+          }`}
           className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-800 dark:text-white resize-none"
           rows="4"
         />
