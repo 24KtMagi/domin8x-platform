@@ -28,7 +28,13 @@ import {
   CloudArrowUpIcon,
   TrashIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  LockClosedIcon,
+  UserPlusIcon,
+  AtSymbolIcon,
+  KeyIcon,
+  ArrowRightOnRectangleIcon,
+  ArrowLeftOnRectangleIcon
 } from '@heroicons/react/24/outline';
 import {
   HeartIcon as HeartIconSolid,
