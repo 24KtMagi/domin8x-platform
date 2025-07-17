@@ -2091,6 +2091,7 @@ export const CreationStudio = ({ onClose }) => {
   const [generatedContent, setGeneratedContent] = useState(null);
   const [showPromptIndex, setShowPromptIndex] = useState(false);
   const [showLogoManager, setShowLogoManager] = useState(false);
+  const [showLogoPlacement, setShowLogoPlacement] = useState(false);
   const [selectedLogo, setSelectedLogo] = useState(null);
   const [appliedLogo, setAppliedLogo] = useState(null);
 
