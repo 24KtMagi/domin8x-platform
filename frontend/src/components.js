@@ -36,7 +36,441 @@ import {
   PlayIcon as PlayIconSolid
 } from '@heroicons/react/24/solid';
 
-// Mock data for the Twitter clone
+// Mock data for saved logos
+const savedLogos = [
+  {
+    id: 1,
+    name: 'Brand Logo 1',
+    url: 'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85&w=100&h=100',
+    createdAt: '2024-01-15',
+    transparent: true
+  },
+  {
+    id: 2,
+    name: 'Music Logo',
+    url: 'https://images.unsplash.com/photo-1491951931722-5a446214b4e2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwyfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85&w=100&h=100',
+    createdAt: '2024-01-14',
+    transparent: true
+  },
+  {
+    id: 3,
+    name: 'Art Studio Logo',
+    url: 'https://images.unsplash.com/photo-1597075095400-fb3f0de70140?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwzfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85&w=100&h=100',
+    createdAt: '2024-01-13',
+    transparent: true
+  }
+];
+
+// Logo Manager Component
+export const LogoManager = ({ isOpen, onClose, onSelectLogo }) => {
+  const [logos, setLogos] = useState(savedLogos);
+  const [isCreating, setIsCreating] = useState(false);
+  const [logoPrompt, setLogoPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [newLogo, setNewLogo] = useState(null);
+  const [logoName, setLogoName] = useState('');
+
+  const handleGenerateLogo = async () => {
+    if (!logoPrompt.trim()) return;
+    
+    setIsGenerating(true);
+    
+    // Simulate AI logo generation
+    setTimeout(() => {
+      const generatedLogo = {
+        url: 'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYXxlbnwwfHx8Ymx1ZXwxNzUyNzQ5MDY1fDA&ixlib=rb-4.1.0&q=85&w=100&h=100',
+        prompt: logoPrompt,
+        transparent: false
+      };
+      
+      setNewLogo(generatedLogo);
+      setIsGenerating(false);
+      toast.success('Logo generated successfully!');
+    }, 2000);
+  };
+
+  const handleMakeTransparent = () => {
+    if (!newLogo) return;
+    
+    setNewLogo({
+      ...newLogo,
+      transparent: true
+    });
+    toast.success('Logo background made transparent!');
+  };
+
+  const handleSaveLogo = () => {
+    if (!newLogo || !logoName.trim()) return;
+    
+    const savedLogo = {
+      id: Date.now(),
+      name: logoName,
+      url: newLogo.url,
+      createdAt: new Date().toISOString().split('T')[0],
+      transparent: newLogo.transparent
+    };
+    
+    setLogos([savedLogo, ...logos]);
+    
+    // Save to localStorage
+    const existingLogos = JSON.parse(localStorage.getItem('mirrorx-logos') || '[]');
+    localStorage.setItem('mirrorx-logos', JSON.stringify([savedLogo, ...existingLogos]));
+    
+    toast.success('Logo saved successfully!');
+    setIsCreating(false);
+    setNewLogo(null);
+    setLogoName('');
+    setLogoPrompt('');
+  };
+
+  const handleDeleteLogo = (logoId) => {
+    const updatedLogos = logos.filter(logo => logo.id !== logoId);
+    setLogos(updatedLogos);
+    
+    // Update localStorage
+    localStorage.setItem('mirrorx-logos', JSON.stringify(updatedLogos));
+    toast.success('Logo deleted successfully!');
+  };
+
+  const handleSelectLogo = (logo) => {
+    onSelectLogo(logo);
+    onClose();
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Logo Manager</h2>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="flex space-x-4 mb-6">
+              <button
+                onClick={() => setIsCreating(false)}
+                className={`px-4 py-2 rounded-full ${
+                  !isCreating
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                Saved Logos
+              </button>
+              <button
+                onClick={() => setIsCreating(true)}
+                className={`px-4 py-2 rounded-full ${
+                  isCreating
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                Create New Logo
+              </button>
+            </div>
+
+            {!isCreating ? (
+              // Saved Logos Grid
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {logos.map((logo) => (
+                  <div
+                    key={logo.id}
+                    className="relative group bg-gray-50 dark:bg-gray-800 rounded-lg p-4 hover:shadow-lg transition-shadow"
+                  >
+                    <div className="aspect-square mb-3 bg-white dark:bg-gray-700 rounded-lg overflow-hidden">
+                      <img
+                        src={logo.url}
+                        alt={logo.name}
+                        className="w-full h-full object-contain"
+                        style={{
+                          backgroundColor: logo.transparent ? 'transparent' : 'white',
+                          backgroundImage: logo.transparent ? 'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)' : 'none',
+                          backgroundSize: logo.transparent ? '20px 20px' : 'auto',
+                          backgroundPosition: logo.transparent ? '0 0, 0 10px, 10px -10px, -10px 0px' : 'auto'
+                        }}
+                      />
+                    </div>
+                    <p className="text-sm font-medium truncate">{logo.name}</p>
+                    <p className="text-xs text-gray-500">{logo.createdAt}</p>
+                    {logo.transparent && (
+                      <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                        Transparent
+                      </div>
+                    )}
+                    <div className="flex justify-between items-center mt-2">
+                      <button
+                        onClick={() => handleSelectLogo(logo)}
+                        className="px-3 py-1 bg-blue-500 text-white rounded-full text-xs hover:bg-blue-600"
+                      >
+                        Select
+                      </button>
+                      <button
+                        onClick={() => handleDeleteLogo(logo.id)}
+                        className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // Create New Logo Section
+              <div className="space-y-6">
+                <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg">
+                  <h3 className="font-semibold mb-3 flex items-center">
+                    <PaintBrushIcon className="w-5 h-5 mr-2 text-blue-500" />
+                    AI Logo Generation
+                  </h3>
+                  <input
+                    type="text"
+                    value={logoPrompt}
+                    onChange={(e) => setLogoPrompt(e.target.value)}
+                    placeholder="Describe your logo (e.g., 'modern tech company logo with blue and silver colors')"
+                    className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white mb-3"
+                  />
+                  <button
+                    onClick={handleGenerateLogo}
+                    disabled={isGenerating || !logoPrompt.trim()}
+                    className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  >
+                    {isGenerating ? 'Generating Logo...' : 'Generate Logo'}
+                  </button>
+                </div>
+
+                {newLogo && (
+                  <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <h4 className="font-semibold mb-3">Generated Logo:</h4>
+                    <div className="flex space-x-4">
+                      <div className="w-32 h-32 bg-white dark:bg-gray-700 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-600">
+                        <img
+                          src={newLogo.url}
+                          alt="Generated Logo"
+                          className="w-full h-full object-contain"
+                          style={{
+                            backgroundColor: newLogo.transparent ? 'transparent' : 'white',
+                            backgroundImage: newLogo.transparent ? 'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)' : 'none',
+                            backgroundSize: newLogo.transparent ? '20px 20px' : 'auto',
+                            backgroundPosition: newLogo.transparent ? '0 0, 0 10px, 10px -10px, -10px 0px' : 'auto'
+                          }}
+                        />
+                      </div>
+                      <div className="flex-1 space-y-3">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={handleMakeTransparent}
+                            disabled={newLogo.transparent}
+                            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            {newLogo.transparent ? 'Background Removed' : 'Remove Background'}
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          value={logoName}
+                          onChange={(e) => setLogoName(e.target.value)}
+                          placeholder="Enter logo name"
+                          className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                        />
+                        <button
+                          onClick={handleSaveLogo}
+                          disabled={!logoName.trim()}
+                          className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Save Logo
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+// Logo Overlay Component
+export const LogoOverlay = ({ 
+  isOpen, 
+  onClose, 
+  onApplyLogo, 
+  selectedLogo, 
+  imageUrl 
+}) => {
+  const [logoSize, setLogoSize] = useState(60);
+  const [logoOpacity, setLogoOpacity] = useState(0.8);
+  const [showPreview, setShowPreview] = useState(true);
+
+  const handleApply = () => {
+    onApplyLogo({
+      logo: selectedLogo,
+      size: logoSize,
+      opacity: logoOpacity
+    });
+    onClose();
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && selectedLogo && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Logo Overlay Settings</h2>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Preview Section */}
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-semibold">Preview</h3>
+                <button
+                  onClick={() => setShowPreview(!showPreview)}
+                  className="flex items-center space-x-2 text-blue-500 hover:text-blue-600"
+                >
+                  {showPreview ? (
+                    <EyeSlashIcon className="w-5 h-5" />
+                  ) : (
+                    <EyeIcon className="w-5 h-5" />
+                  )}
+                  <span className="text-sm">{showPreview ? 'Hide' : 'Show'} Preview</span>
+                </button>
+              </div>
+              {showPreview && (
+                <div className="relative w-full h-64 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
+                  <img
+                    src={imageUrl}
+                    alt="Base image"
+                    className="w-full h-full object-cover"
+                  />
+                  <div 
+                    className="absolute"
+                    style={{
+                      bottom: '10px',
+                      left: '10px',
+                      width: `${logoSize}px`,
+                      height: `${logoSize}px`,
+                      opacity: logoOpacity
+                    }}
+                  >
+                    <img
+                      src={selectedLogo.url}
+                      alt={selectedLogo.name}
+                      className="w-full h-full object-contain"
+                      style={{
+                        backgroundColor: selectedLogo.transparent ? 'transparent' : 'white',
+                        borderRadius: '8px'
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Controls */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Logo Size: {logoSize}px
+                </label>
+                <input
+                  type="range"
+                  min="20"
+                  max="150"
+                  value={logoSize}
+                  onChange={(e) => setLogoSize(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>20px</span>
+                  <span>150px</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Logo Opacity: {Math.round(logoOpacity * 100)}%
+                </label>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="1"
+                  step="0.1"
+                  value={logoOpacity}
+                  onChange={(e) => setLogoOpacity(Number(e.target.value))}
+                  className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>10%</span>
+                  <span>100%</span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <strong>Selected Logo:</strong> {selectedLogo.name}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Logo will be positioned at bottom-left corner with 10px margin
+                </p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleApply}
+                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Apply Logo
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 const mockTweets = [
   {
     id: 1,
