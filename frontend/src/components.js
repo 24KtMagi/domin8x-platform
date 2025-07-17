@@ -2271,10 +2271,11 @@ export const CreationStudio = ({ onClose }) => {
       <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
         <h4 className="font-semibold mb-2">🎨 Logo Design Tips:</h4>
         <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-          <li>• Keep it simple and memorable</li>
+          <li>• Keep it simple and memorable (think Apple, Nike)</li>
           <li>• Specify colors and typography preferences</li>
           <li>• Include company/brand name and industry</li>
           <li>• Consider scalability (looks good small and large)</li>
+          <li>• Try: "minimalist tech company logo", "vintage coffee shop emblem"</li>
         </ul>
       </div>
     </div>
