@@ -2098,7 +2098,7 @@ export const Navigation = ({ darkMode, setDarkMode, currentUser, onSignOut, onSh
   ];
 
   const handleSignOut = () => {
-    localStorage.removeItem('mirrorx-user');
+    localStorage.removeItem('domin8x-user');
     onSignOut();
     toast.success('Signed out successfully!');
   };
