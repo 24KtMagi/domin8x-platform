@@ -1628,7 +1628,7 @@ export const LogoManager = ({ isOpen, onClose, onSelectLogo }) => {
     setLogos(updatedLogos);
     
     // Update localStorage
-    localStorage.setItem('mirrorx-logos', JSON.stringify(updatedLogos));
+    localStorage.setItem('domin8x-logos', JSON.stringify(updatedLogos));
     toast.success('Logo deleted successfully!');
   };
 
