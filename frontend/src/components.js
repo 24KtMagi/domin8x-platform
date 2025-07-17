@@ -23,7 +23,12 @@ import {
   PlayIcon,
   PauseIcon,
   VolumeXIcon,
-  SpeakerWaveIcon
+  SpeakerWaveIcon,
+  PaintBrushIcon,
+  CloudArrowUpIcon,
+  TrashIcon,
+  EyeIcon,
+  EyeSlashIcon
 } from '@heroicons/react/24/outline';
 import {
   HeartIcon as HeartIconSolid,
