@@ -324,7 +324,7 @@ const Cur10saXBuilder = () => {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-2">
               {[
-                { icon: TypeIcon, label: 'Text' },
+                { icon: ChatBubbleOvalLeftIcon, label: 'Text' },
                 { icon: PhotoIcon, label: 'Image' },
                 { icon: RectangleStackIcon, label: 'Section' },
                 { icon: SwatchIcon, label: 'Color' }
