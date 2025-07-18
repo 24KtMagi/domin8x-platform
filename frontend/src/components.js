@@ -80,12 +80,20 @@ const mockUsers = [
 // Authentication Component
 export const AuthPage = ({ onAuthSuccess }) => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPasswordStep, setForgotPasswordStep] = useState('email'); // 'email', 'verify', 'reset'
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
     name: ''
+  });
+  const [forgotPasswordData, setForgotPasswordData] = useState({
+    email: '',
+    verificationCode: '',
+    newPassword: '',
+    confirmNewPassword: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
