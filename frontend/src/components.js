@@ -472,6 +472,173 @@ export const AuthPage = ({ onAuthSuccess }) => {
           </div>
         </div>
       </motion.div>
+
+      {/* Forgot Password Modal */}
+      <AnimatePresence>
+        {showForgotPassword && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-md w-full"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Reset Password</h2>
+                <button
+                  onClick={() => {
+                    setShowForgotPassword(false);
+                    setForgotPasswordStep('email');
+                    setForgotPasswordData({
+                      email: '',
+                      verificationCode: '',
+                      newPassword: '',
+                      confirmNewPassword: ''
+                    });
+                    setErrors({});
+                  }}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+                >
+                  <XMarkIcon className="w-6 h-6" />
+                </button>
+              </div>
+
+              <form onSubmit={handleForgotPasswordSubmit} className="space-y-6">
+                {forgotPasswordStep === 'email' && (
+                  <>
+                    <div>
+                      <p className="text-gray-600 dark:text-gray-400 mb-4">
+                        Enter your email address and we'll send you a verification code to reset your password.
+                      </p>
+                      <label className="block text-sm font-medium mb-2">Email Address</label>
+                      <div className="relative">
+                        <AtSymbolIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                        <input
+                          type="email"
+                          value={forgotPasswordData.email}
+                          onChange={(e) => handleForgotPasswordInputChange('email', e.target.value)}
+                          placeholder="Enter your email"
+                          className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white ${
+                            errors.email ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                    </div>
+                  </>
+                )}
+
+                {forgotPasswordStep === 'verify' && (
+                  <>
+                    <div>
+                      <p className="text-gray-600 dark:text-gray-400 mb-4">
+                        We've sent a verification code to <strong>{forgotPasswordData.email}</strong>. 
+                        Enter the code below to continue.
+                      </p>
+                      <label className="block text-sm font-medium mb-2">Verification Code</label>
+                      <div className="relative">
+                        <KeyIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                        <input
+                          type="text"
+                          value={forgotPasswordData.verificationCode}
+                          onChange={(e) => handleForgotPasswordInputChange('verificationCode', e.target.value)}
+                          placeholder="Enter verification code"
+                          className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white ${
+                            errors.verificationCode ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {errors.verificationCode && <p className="text-red-500 text-sm mt-1">{errors.verificationCode}</p>}
+                      <p className="text-xs text-gray-500 mt-2">For demo purposes, use code: <strong>123456</strong></p>
+                    </div>
+                  </>
+                )}
+
+                {forgotPasswordStep === 'reset' && (
+                  <>
+                    <div>
+                      <p className="text-gray-600 dark:text-gray-400 mb-4">
+                        Enter your new password below.
+                      </p>
+                      <label className="block text-sm font-medium mb-2">New Password</label>
+                      <div className="relative">
+                        <KeyIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                        <input
+                          type="password"
+                          value={forgotPasswordData.newPassword}
+                          onChange={(e) => handleForgotPasswordInputChange('newPassword', e.target.value)}
+                          placeholder="Enter new password"
+                          className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white ${
+                            errors.newPassword ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {errors.newPassword && <p className="text-red-500 text-sm mt-1">{errors.newPassword}</p>}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Confirm New Password</label>
+                      <div className="relative">
+                        <LockClosedIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                        <input
+                          type="password"
+                          value={forgotPasswordData.confirmNewPassword}
+                          onChange={(e) => handleForgotPasswordInputChange('confirmNewPassword', e.target.value)}
+                          placeholder="Confirm new password"
+                          className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white ${
+                            errors.confirmNewPassword ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {errors.confirmNewPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmNewPassword}</p>}
+                    </div>
+                  </>
+                )}
+
+                <div className="flex space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setForgotPasswordStep('email');
+                      setForgotPasswordData({
+                        email: '',
+                        verificationCode: '',
+                        newPassword: '',
+                        confirmNewPassword: ''
+                      });
+                      setErrors({});
+                    }}
+                    className="flex-1 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium flex items-center justify-center"
+                  >
+                    {isLoading ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <>
+                        {forgotPasswordStep === 'email' && 'Send Code'}
+                        {forgotPasswordStep === 'verify' && 'Verify Code'}
+                        {forgotPasswordStep === 'reset' && 'Reset Password'}
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
