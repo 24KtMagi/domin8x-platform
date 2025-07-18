@@ -210,6 +210,93 @@ export const AuthPage = ({ onAuthSuccess }) => {
       name: ''
     });
     setErrors({});
+    setShowForgotPassword(false);
+  };
+
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    if (forgotPasswordStep === 'email') {
+      // Validate email
+      if (!forgotPasswordData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(forgotPasswordData.email)) {
+        setErrors({ email: 'Please enter a valid email address' });
+        setIsLoading(false);
+        return;
+      }
+
+      // Check if email exists in mockUsers
+      const user = mockUsers.find(u => u.email === forgotPasswordData.email);
+      if (!user) {
+        setErrors({ email: 'Email not found in our records' });
+        setIsLoading(false);
+        return;
+      }
+
+      // Simulate sending verification code
+      setTimeout(() => {
+        toast.success('Verification code sent to your email!');
+        setForgotPasswordStep('verify');
+        setIsLoading(false);
+        setErrors({});
+      }, 1500);
+
+    } else if (forgotPasswordStep === 'verify') {
+      // Simulate code verification (in real app, this would verify against sent code)
+      if (!forgotPasswordData.verificationCode || forgotPasswordData.verificationCode !== '123456') {
+        setErrors({ verificationCode: 'Invalid verification code. Try "123456" for demo' });
+        setIsLoading(false);
+        return;
+      }
+
+      setTimeout(() => {
+        toast.success('Code verified successfully!');
+        setForgotPasswordStep('reset');
+        setIsLoading(false);
+        setErrors({});
+      }, 1000);
+
+    } else if (forgotPasswordStep === 'reset') {
+      // Validate new password
+      if (!forgotPasswordData.newPassword || forgotPasswordData.newPassword.length < 6) {
+        setErrors({ newPassword: 'Password must be at least 6 characters' });
+        setIsLoading(false);
+        return;
+      }
+
+      if (forgotPasswordData.newPassword !== forgotPasswordData.confirmNewPassword) {
+        setErrors({ confirmNewPassword: 'Passwords do not match' });
+        setIsLoading(false);
+        return;
+      }
+
+      // Update password in mockUsers
+      const user = mockUsers.find(u => u.email === forgotPasswordData.email);
+      if (user) {
+        user.password = forgotPasswordData.newPassword;
+      }
+
+      setTimeout(() => {
+        toast.success('Password reset successfully! You can now sign in with your new password.');
+        setShowForgotPassword(false);
+        setForgotPasswordStep('email');
+        setForgotPasswordData({
+          email: '',
+          verificationCode: '',
+          newPassword: '',
+          confirmNewPassword: ''
+        });
+        setIsLoading(false);
+        setErrors({});
+      }, 1500);
+    }
+  };
+
+  const handleForgotPasswordInputChange = (field, value) => {
+    setForgotPasswordData({ ...forgotPasswordData, [field]: value });
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: '' });
+    }
   };
 
   return (
