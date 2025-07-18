@@ -450,6 +450,17 @@ export const AuthPage = ({ onAuthSuccess }) => {
               {isSignUp ? 'Sign In' : 'Sign Up'}
             </button>
           </p>
+          {!isSignUp && (
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              Forgot your password?{' '}
+              <button
+                onClick={() => setShowForgotPassword(true)}
+                className="text-blue-500 hover:text-blue-600 font-medium"
+              >
+                Reset Password
+              </button>
+            </p>
+          )}
         </div>
 
         {/* Demo Accounts */}
